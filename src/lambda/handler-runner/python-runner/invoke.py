@@ -15,6 +15,7 @@ def decimal_default_proc(obj):
     if isinstance(obj, Decimal):
         return float(obj)
     raise TypeError
+
 class FakeLambdaContext(object):
     def __init__(self, name='Fake', version='LATEST', timeout=6, **kwargs):
         self.name = name
