@@ -9,7 +9,12 @@ import sys
 import os
 from time import strftime, time
 from importlib import import_module
+from decimal import Decimal
 
+def decimal_default_proc(obj):
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError
 class FakeLambdaContext(object):
     def __init__(self, name='Fake', version='LATEST', timeout=6, **kwargs):
         self.name = name
@@ -102,5 +107,5 @@ if __name__ == '__main__':
             '__offline_payload__': result
         }
 
-        sys.stdout.write(json.dumps(data))
+        sys.stdout.write(json.dumps(data, default = decimal_default_proc))
         sys.stdout.write('\n')
