@@ -15,6 +15,33 @@ def decimal_default_proc(obj):
     if isinstance(obj, Decimal):
         return float(obj)
     raise TypeError
+
+class RuaOnlySpException(Exception):
+    pass
+
+class DirectRedirectException(Exception):
+    def __init__(self, hoge):
+        self.hoge = hoge
+    def __str__(self):
+        return json.loads(self.hoge)["url"]
+
+class NotFoundException(Exception):
+    def __init__(self, hoge):
+        self.hoge = hoge
+    def __str__(self):
+        return "NOTFOUND"
+
+class InvalidException(Exception):
+    def __init__(self, hoge):
+        self.hoge = hoge
+    def __str__(self):
+        return "INVALID"
+
+class BadRequestException(Exception):
+    def __init__(self, hoge):
+        self.hoge = hoge
+    def __str__(self):
+        return "BADREQUEST"
 class FakeLambdaContext(object):
     def __init__(self, name='Fake', version='LATEST', timeout=6, **kwargs):
         self.name = name
@@ -99,7 +126,20 @@ if __name__ == '__main__':
         input = json.loads(stdin.readline())
 
         context = FakeLambdaContext(**input.get('context', {}))
-        result = handler(input['event'], context)
+        try:
+            result = handler(input['event'], context)
+        except NotFoundException:
+            raise
+        except RuaOnlySpException:
+            raise
+        except DirectRedirectException:
+            raise
+        except BadRequestException:
+            raise
+        except:
+            import traceback
+            traceback.print_exc()
+            raise InvalidException('500')
 
         data = {
             # just an identifier to distinguish between
