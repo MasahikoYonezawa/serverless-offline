@@ -100,12 +100,13 @@ if __name__ == '__main__':
 
         context = FakeLambdaContext(**input.get('context', {}))
         try:
-            print(input['event'])
-            print(context)
+            print("EVENT:", input['event'])
+            print("CONTEXT:", context)
             result = handler(input['event'], context)
+            print("RESULT:", result)
         except Exception as e:
             import traceback
-            print(e)
+            print("EXCEPTION:", e)
             print(traceback.format_exc())
 
         data = {
