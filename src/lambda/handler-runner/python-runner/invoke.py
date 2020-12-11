@@ -10,19 +10,13 @@ import os
 from time import strftime, time
 from importlib import import_module
 from decimal import Decimal
+import re
 
 def decimal_default_proc(obj):
     if isinstance(obj, Decimal):
         return float(obj)
     raise TypeError
 
-class NotFoundException(Exception):
-    def __init__(self, hoge):
-        print("SELF:", self)
-        print("HOGE:", hoge)
-        self.hoge = hoge
-    def __str__(self):
-        return "NOTFOUND"
 class FakeLambdaContext(object):
     def __init__(self, name='Fake', version='LATEST', timeout=6, **kwargs):
         self.name = name
@@ -111,20 +105,21 @@ if __name__ == '__main__':
             print("EVENT:", input['event'])
             print("CONTEXT:", context)
             result = handler(input['event'], context)
-            print("RESULT:", result)
+            print("RESULT:", result)  
         except Exception as e:
             import traceback
+            
             print("EXCEPTION:", e)
             print("EXCEPTION_TYPE:", str(type(e)))
-            # if e == NOTFOUND:
+            if re.match(r'[a-zA-Z0-9]+\.NotFoundException', str(type(e))) is not None:
+                sys.stdout.write('NOTFOUND')
             print(traceback.format_exc())
-            raise NotFoundException('404')
+        else:
+            data = {
+                # just an identifier to distinguish between
+                # interesting data (result) and stdout/print
+                '__offline_payload__': result
+            }
 
-        data = {
-            # just an identifier to distinguish between
-            # interesting data (result) and stdout/print
-            '__offline_payload__': result
-        }
-
-        sys.stdout.write(json.dumps(data, default = decimal_default_proc))
-        sys.stdout.write('\n')
+            sys.stdout.write(json.dumps(data, default = decimal_default_proc))
+            sys.stdout.write('\n')
