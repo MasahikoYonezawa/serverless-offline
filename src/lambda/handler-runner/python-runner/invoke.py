@@ -105,9 +105,11 @@ if __name__ == '__main__':
             result = handler(input['event'], context)
             print("RESULT:", result)
         except Exception as e:
-            result = e
             import traceback
             print("EXCEPTION:", e)
+            print("EXCEPTION_TYPE:", str(type(e)))
+            # if e == NOTFOUND:
+            result = "NOTFOUND"
             print(traceback.format_exc())
 
         data = {
