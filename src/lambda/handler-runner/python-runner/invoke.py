@@ -15,6 +15,14 @@ def decimal_default_proc(obj):
     if isinstance(obj, Decimal):
         return float(obj)
     raise TypeError
+
+class NotFoundException(Exception):
+    def __init__(self, hoge):
+        print("SELF:", self)
+        print("HOGE:", hoge)
+        self.hoge = hoge
+    def __str__(self):
+        return "NOTFOUND"
 class FakeLambdaContext(object):
     def __init__(self, name='Fake', version='LATEST', timeout=6, **kwargs):
         self.name = name
@@ -109,8 +117,8 @@ if __name__ == '__main__':
             print("EXCEPTION:", e)
             print("EXCEPTION_TYPE:", str(type(e)))
             # if e == NOTFOUND:
-            result = "NOTFOUND"
             print(traceback.format_exc())
+            raise NotFoundException('404')
 
         data = {
             # just an identifier to distinguish between
