@@ -109,9 +109,10 @@ if __name__ == '__main__':
         except Exception as e:
             import traceback
             
-            print("EXCEPTION:", e)
+            print("EXCEPTION:", str(e))
             print("EXCEPTION_TYPE:", str(type(e)))
-            if re.match(r'[a-zA-Z0-9]+\.NotFoundException', str(type(e))) is not None:
+            if str(e) == "NOTFOUND":
+                print("NOTFOUND")
                 sys.stdout.write('NOTFOUND')
             print(traceback.format_exc())
         else:
