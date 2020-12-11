@@ -99,7 +99,11 @@ if __name__ == '__main__':
         input = json.loads(stdin.readline())
 
         context = FakeLambdaContext(**input.get('context', {}))
-        result = handler(input['event'], context)
+        try:
+            result = handler(input['event'], context)
+        except:
+            import traceback
+            print(traceback.format_exc())
 
         data = {
             # just an identifier to distinguish between
