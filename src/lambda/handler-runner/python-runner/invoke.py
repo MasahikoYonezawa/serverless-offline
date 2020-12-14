@@ -101,26 +101,15 @@ if __name__ == '__main__':
         input = json.loads(stdin.readline())
 
         context = FakeLambdaContext(**input.get('context', {}))
-        try:
-            print("EVENT:", input['event'])
-            print("CONTEXT:", context)
-            result = handler(input['event'], context)
-            print("RESULT:", result)  
-        except Exception as e:
-            import traceback
-            
-            print("EXCEPTION:", str(e))
-            print("EXCEPTION_TYPE:", str(type(e)))
-            if str(e) == "NOTFOUND":
-                print("NOTFOUND")
-                sys.stdout.write('NOTFOUND')
-            print(traceback.format_exc())
-        else:
-            data = {
-                # just an identifier to distinguish between
-                # interesting data (result) and stdout/print
-                '__offline_payload__': result
-            }
+        print("EVENT:", input['event'])
+        print("CONTEXT:", context)
+        result = handler(input['event'], context)
+        print("RESULT:", result)  
+        data = {
+            # just an identifier to distinguish between
+            # interesting data (result) and stdout/print
+            '__offline_payload__': result
+        }
 
-            sys.stdout.write(json.dumps(data, default = decimal_default_proc))
-            sys.stdout.write('\n')
+        sys.stdout.write(json.dumps(data, default = decimal_default_proc))
+        sys.stdout.write('\n')
