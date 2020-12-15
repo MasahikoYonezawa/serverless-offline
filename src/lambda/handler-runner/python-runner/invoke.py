@@ -101,10 +101,8 @@ if __name__ == '__main__':
         input = json.loads(stdin.readline())
 
         context = FakeLambdaContext(**input.get('context', {}))
-        print("EVENT:", input['event'])
-        print("CONTEXT:", context)
         result = handler(input['event'], context)
-        print("RESULT:", result)  
+        
         data = {
             # just an identifier to distinguish between
             # interesting data (result) and stdout/print
