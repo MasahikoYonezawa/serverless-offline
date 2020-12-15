@@ -105,18 +105,17 @@ if __name__ == '__main__':
         print("CONTEXT", context)
         try:
             result = handler(input['event'], context)
+            data = {
+                # just an identifier to distinguish between
+                # interesting data (result) and stdout/print
+                '__offline_payload__': result
+            }
         except Exception as e:
             print("EXCEPTION", str(e))
-            result = {
-                'statusCode': 404,
-                'body': str(e)
+            data = {
+                '__exception__': str(e)
             }
-        print("RESULT", result)
-        data = {
-            # just an identifier to distinguish between
-            # interesting data (result) and stdout/print
-            '__offline_payload__': result
-        }
+        
 
         sys.stdout.write(json.dumps(data, default = decimal_default_proc))
         sys.stdout.write('\n')

@@ -83,6 +83,7 @@ export default class PythonRunner {
         // everything else is print(), logging, ...
       } else {
         console.log(item)
+        throw new Error('NOTFOUND')
       }
     }
 
@@ -101,6 +102,7 @@ export default class PythonRunner {
         event,
         allowCache: this.#allowCache,
       })
+      console.log(input)
 
       const onErr = (data) => {
         // TODO
