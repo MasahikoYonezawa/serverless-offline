@@ -103,7 +103,10 @@ if __name__ == '__main__':
         context = FakeLambdaContext(**input.get('context', {}))
         print("EVENT", input['event'])
         print("CONTEXT", context)
-        result = handler(input['event'], context)
+        try:
+            result = handler(input['event'], context)
+        except Exception as e:
+            print("EXCEPTION", str(e))
         print("RESULT", result)
         data = {
             # just an identifier to distinguish between
