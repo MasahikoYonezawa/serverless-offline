@@ -566,6 +566,7 @@ export default class HttpServer {
 
       try {
         result = await lambdaFunction.runHandler()
+        console.log('RESULT2', result)
       } catch (_err) {
         err = _err
       }

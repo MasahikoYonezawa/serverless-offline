@@ -83,7 +83,6 @@ export default class PythonRunner {
         // everything else is print(), logging, ...
       } else {
         console.log(item)
-        throw new Error('NOTFOUND')
       }
     }
 
