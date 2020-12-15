@@ -107,6 +107,10 @@ if __name__ == '__main__':
             result = handler(input['event'], context)
         except Exception as e:
             print("EXCEPTION", str(e))
+            result = {
+                'statusCode': 404,
+                'body': str(e)
+            }
         print("RESULT", result)
         data = {
             # just an identifier to distinguish between
