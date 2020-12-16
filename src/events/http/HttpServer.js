@@ -582,52 +582,80 @@ export default class HttpServer {
 
       // Failure handling
       let errorStatusCode = '502'
+
+      if (result === 'NOTFOUND') {
+        err = result
+        errorStatusCode = '404'
+      } else if (result === 'INVALID') {
+        err = result
+        errorStatusCode = '404'
+      }
       if (err) {
-        // Since the --useChildProcesses option loads the handler in
-        // a separate process and serverless-offline communicates with it
-        // over IPC, we are unable to catch JavaScript unhandledException errors
-        // when the handler code contains bad JavaScript. Instead, we "catch"
-        // it here and reply in the same way that we would have above when
-        // we lazy-load the non-IPC handler function.
-        if (this.#options.useChildProcesses && err.ipcException) {
-          return this._reply502(
-            response,
-            `Error while loading ${functionKey}`,
-            err,
-          )
-        }
+        if (errorStatusCode === '404') {
+          const errorMessage = err.toString()
+          // Mocks Lambda errors
+          result = {
+            errorMessage,
+            errorType: err.toString(),
+            stackTrace: err.toString(),
+          }
 
-        const errorMessage = (err.message || err).toString()
-
-        const re = /\[(\d{3})]/
-        const found = errorMessage.match(re)
-
-        if (found && found.length > 1) {
-          ;[, errorStatusCode] = found
+          for (const [key, value] of Object.entries(endpoint.responses)) {
+            if (
+              key !== 'default' &&
+              errorMessage.match(`^${value.selectionPattern || key}$`)
+            ) {
+              responseName = key
+              break
+            }
+          }
         } else {
-          errorStatusCode = '502'
-        }
+          // Since the --useChildProcesses option loads the handler in
+          // a separate process and serverless-offline communicates with it
+          // over IPC, we are unable to catch JavaScript unhandledException errors
+          // when the handler code contains bad JavaScript. Instead, we "catch"
+          // it here and reply in the same way that we would have above when
+          // we lazy-load the non-IPC handler function.
+          if (this.#options.useChildProcesses && err.ipcException) {
+            return this._reply502(
+              response,
+              `Error while loading ${functionKey}`,
+              err,
+            )
+          }
 
-        // Mocks Lambda errors
-        result = {
-          errorMessage,
-          errorType: err.constructor.name,
-          stackTrace: this._getArrayStackTrace(err.stack),
-        }
+          const errorMessage = (err.message || err).toString()
 
-        serverlessLog(`Failure: ${errorMessage}`)
+          const re = /\[(\d{3})]/
+          const found = errorMessage.match(re)
 
-        if (!this.#options.hideStackTraces) {
-          console.error(err.stack)
-        }
+          if (found && found.length > 1) {
+            ;[, errorStatusCode] = found
+          } else {
+            errorStatusCode = '502'
+          }
 
-        for (const [key, value] of Object.entries(endpoint.responses)) {
-          if (
-            key !== 'default' &&
-            errorMessage.match(`^${value.selectionPattern || key}$`)
-          ) {
-            responseName = key
-            break
+          // Mocks Lambda errors
+          result = {
+            errorMessage,
+            errorType: err.constructor.name,
+            stackTrace: this._getArrayStackTrace(err.stack),
+          }
+
+          serverlessLog(`Failure: ${errorMessage}`)
+
+          if (!this.#options.hideStackTraces) {
+            console.error(err.stack)
+          }
+
+          for (const [key, value] of Object.entries(endpoint.responses)) {
+            if (
+              key !== 'default' &&
+              errorMessage.match(`^${value.selectionPattern || key}$`)
+            ) {
+              responseName = key
+              break
+            }
           }
         }
       }
