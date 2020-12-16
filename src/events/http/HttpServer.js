@@ -590,6 +590,7 @@ export default class HttpServer {
         err = result
         errorStatusCode = '404'
       }
+      console.log(endpoint)
       if (err) {
         if (errorStatusCode === '404') {
           const errorMessage = err.toString()
@@ -609,7 +610,7 @@ export default class HttpServer {
               break
             }
           }
-          console.log('RESPONSENAME', responseName)
+          responseName = errorMessage
         } else {
           // Since the --useChildProcesses option loads the handler in
           // a separate process and serverless-offline communicates with it
@@ -660,9 +661,11 @@ export default class HttpServer {
           }
         }
       }
+      console.log('RESPONSENAME', responseName)
 
       debugLog(`Using response '${responseName}'`)
       const chosenResponse = endpoint.responses[responseName]
+      console.log('chosenResponse', chosenResponse)
 
       /* RESPONSE PARAMETERS PROCCESSING */
 
