@@ -300,8 +300,11 @@ export default class HttpServer {
   }
 
   createRoutes(functionKey, httpEvent, handler) {
+    console.log('httpEvent', httpEvent)
+    console.log('handler', handler)
     const [handlerPath] = splitHandlerPathAndName(handler)
     const method = httpEvent.method.toUpperCase()
+    console.log('handlerPath', handlerPath)
 
     const endpoint = new Endpoint(
       join(this.#serverless.config.servicePath, handlerPath),

@@ -30,6 +30,9 @@ export default class Endpoint {
   #http = null
 
   constructor(handlerPath, http) {
+    console.log('handlerPath', handlerPath)
+    console.log('http', http)
+
     this.#handlerPath = handlerPath
     this.#http = http
 
@@ -41,6 +44,7 @@ export default class Endpoint {
   _setVmTemplates(fullEndpoint) {
     // determine requestTemplate
     // first check if requestTemplate is set through serverless
+    console.log('fullEndpoint2', fullEndpoint)
     const fep = fullEndpoint
 
     try {
@@ -67,19 +71,24 @@ export default class Endpoint {
 
       // determine response template
       const resFilename = `${this.#handlerPath}.res.vm`
+      console.log('resFilename', resFilename)
 
       fep.responseContentType = getResponseContentType(fep)
       debugLog('Response Content-Type ', fep.responseContentType)
 
       // load response template from http response template, or load file if exists other use default
+      console.log('fullEndpoint3', fep)
       if (fep.response && fep.response.template) {
+        console.log('case1')
         fep.responses.default.responseTemplates[fep.responseContentType] =
           fep.response.template
       } else if (existsSync(resFilename)) {
+        console.log('case2')
         fep.responses.default.responseTemplates[
           fep.responseContentType
         ] = readFile(resFilename)
       } else {
+        console.log('case3')
         fep.responses.default.responseTemplates[
           fep.responseContentType
         ] = defaultResponseTemplate
@@ -128,7 +137,7 @@ export default class Endpoint {
       // determine request and response templates or use defaults
       return this._setVmTemplates(fullEndpoint)
     }
-
+    console.log('fullEndpoint1', fullEndpoint)
     return fullEndpoint
   }
 }

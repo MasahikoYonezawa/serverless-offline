@@ -23,6 +23,32 @@ export default class OfflineEndpoint {
           },
           statusCode: 200,
         },
+        NOTFOUND: {
+          404: {
+            statusCode: '404',
+          },
+          responseModels: {
+            'application/json;charset=UTF-8': 'Empty',
+          },
+          responseParameters: {},
+          responseTemplates: {
+            'application/json;charset=UTF-8': '',
+          },
+          statusCode: 404,
+        },
+        INVALID: {
+          404: {
+            statusCode: '404',
+          },
+          responseModels: {
+            'application/json;charset=UTF-8': 'Empty',
+          },
+          responseParameters: {},
+          responseTemplates: {
+            'application/json;charset=UTF-8': '',
+          },
+          statusCode: 404,
+        },
       },
       type: 'AWS',
     }
