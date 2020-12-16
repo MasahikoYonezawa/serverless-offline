@@ -303,10 +303,8 @@ export default class HttpServer {
     console.log('httpEvent')
     console.dir(httpEvent, { depth: null })
 
-    console.log('handler', handler)
     const [handlerPath] = splitHandlerPathAndName(handler)
     const method = httpEvent.method.toUpperCase()
-    console.log('handlerPath', handlerPath)
 
     const endpoint = new Endpoint(
       join(this.#serverless.config.servicePath, handlerPath),
@@ -571,7 +569,6 @@ export default class HttpServer {
 
       try {
         result = await lambdaFunction.runHandler()
-        console.log('RESULT2', result)
       } catch (_err) {
         err = _err
       }
@@ -595,6 +592,7 @@ export default class HttpServer {
         err = result
         errorStatusCode = '404'
       }
+      console.log('ENDPOINT:')
       console.dir(endpoint, { depth: null })
       if (err) {
         if (errorStatusCode === '404') {
@@ -825,7 +823,6 @@ export default class HttpServer {
           typeof result === 'string' &&
           responseContentType !== 'text/html'
         ) {
-          console.log('RESULT3', result)
           response.source = JSON.stringify(result)
         } else if (result && result.body && typeof result.body !== 'string') {
           return this._reply502(
@@ -950,7 +947,8 @@ export default class HttpServer {
           )
       }
 
-      console.log('RESPONSE', response)
+      console.log('RESPONSE')
+      console.dir(response, { depth: null })
 
       // Bon voyage!
       return response

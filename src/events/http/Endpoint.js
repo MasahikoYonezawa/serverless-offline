@@ -31,11 +31,6 @@ export default class Endpoint {
   #http = null
 
   constructor(handlerPath, http) {
-    serverlessLog('handlerPath')
-    serverlessLog(handlerPath)
-    serverlessLog('http')
-    serverlessLog(http)
-
     this.#handlerPath = handlerPath
     this.#http = http
 
@@ -47,8 +42,6 @@ export default class Endpoint {
   _setVmTemplates(fullEndpoint) {
     // determine requestTemplate
     // first check if requestTemplate is set through serverless
-    serverlessLog('fullEndpoint2')
-    serverlessLog(fullEndpoint)
     const fep = fullEndpoint
 
     try {
@@ -75,20 +68,20 @@ export default class Endpoint {
 
       // determine response template
       const resFilename = `${this.#handlerPath}.res.vm`
-      serverlessLog('resFilename')
-      serverlessLog(resFilename)
       fep.responseContentType = getResponseContentType(fep)
       debugLog('Response Content-Type ', fep.responseContentType)
 
       // load response template from http response template, or load file if exists other use default
-      serverlessLog('fullEndpoint3')
-      serverlessLog(fep)
+      fep.responses.NOTFOUND.responseTemplates[fep.responseContentType] =
+        fep.response.statusCodes['404'].template
+      fep.responses.INVALID.responseTemplates[fep.responseContentType] =
+        fep.response.statusCodes['404'].template
       if (fep.response && fep.response.template) {
         serverlessLog('case1')
         fep.responses.default.responseTemplates[fep.responseContentType] =
           fep.response.template
       } else if (existsSync(resFilename)) {
-        serverlessLog('case1')
+        serverlessLog('case2')
         fep.responses.default.responseTemplates[
           fep.responseContentType
         ] = readFile(resFilename)
@@ -137,12 +130,13 @@ export default class Endpoint {
     }
 
     fullEndpoint.integration = this._getIntegration(this.#http)
-
+    serverlessLog('fullEndpoint1')
+    serverlessLog(fullEndpoint)
     if (fullEndpoint.integration === 'AWS') {
       // determine request and response templates or use defaults
       return this._setVmTemplates(fullEndpoint)
     }
-    serverlessLog('fullEndpoint1')
+    serverlessLog('fullEndpoint2')
     serverlessLog(fullEndpoint)
     return fullEndpoint
   }
