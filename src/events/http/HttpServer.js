@@ -300,7 +300,9 @@ export default class HttpServer {
   }
 
   createRoutes(functionKey, httpEvent, handler) {
-    console.log('httpEvent', httpEvent)
+    console.log('httpEvent')
+    console.dir(httpEvent, { depth: null })
+
     console.log('handler', handler)
     const [handlerPath] = splitHandlerPathAndName(handler)
     const method = httpEvent.method.toUpperCase()
