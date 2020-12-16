@@ -609,6 +609,7 @@ export default class HttpServer {
               break
             }
           }
+          console.log('RESPONSENAME', responseName)
         } else {
           // Since the --useChildProcesses option loads the handler in
           // a separate process and serverless-offline communicates with it
