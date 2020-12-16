@@ -593,7 +593,7 @@ export default class HttpServer {
         err = result
         errorStatusCode = '404'
       }
-      console.log(endpoint)
+      console.dir(endpoint, { depth: null })
       if (err) {
         if (errorStatusCode === '404') {
           const errorMessage = err.toString()
@@ -823,6 +823,7 @@ export default class HttpServer {
           typeof result === 'string' &&
           responseContentType !== 'text/html'
         ) {
+          console.log('RESULT3', result)
           response.source = JSON.stringify(result)
         } else if (result && result.body && typeof result.body !== 'string') {
           return this._reply502(
@@ -946,6 +947,8 @@ export default class HttpServer {
             err ? `Replying ${statusCode}` : `[${statusCode}] ${whatToLog}`,
           )
       }
+
+      console.log('RESPONSE', response)
 
       // Bon voyage!
       return response
