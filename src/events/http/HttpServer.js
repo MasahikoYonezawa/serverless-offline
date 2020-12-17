@@ -590,12 +590,12 @@ export default class HttpServer {
         errorStatusCode = '404'
       } else if (result === 'INVALID') {
         err = result
-        errorStatusCode = '404'
+        errorStatusCode = '500'
       }
       console.log('ENDPOINT:')
       console.dir(endpoint, { depth: null })
       if (err) {
-        if (errorStatusCode === '404') {
+        if (errorStatusCode === '404' || errorStatusCode === '500') {
           const errorMessage = err.toString()
           // Mocks Lambda errors
           result = {
