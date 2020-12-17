@@ -78,6 +78,8 @@ export default class Endpoint {
         fep.response.statusCodes['500'].template
       fep.responses.BADREQUEST.responseTemplates[fep.responseContentType] =
         fep.response.statusCodes['400'].template
+      fep.responses.DIRECTREDIRECT.responseTemplates[fep.responseContentType] =
+        fep.response.statusCodes['302'].template
       if (fep.response && fep.response.template) {
         serverlessLog('case1')
         fep.responses.default.responseTemplates[fep.responseContentType] =

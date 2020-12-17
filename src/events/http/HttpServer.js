@@ -27,6 +27,7 @@ import {
 import LambdaProxyIntegrationEventV2 from './lambda-events/LambdaProxyIntegrationEventV2.js'
 
 const { parse, stringify } = JSON
+const http = require('http')
 
 export default class HttpServer {
   #lambda = null
@@ -585,6 +586,24 @@ export default class HttpServer {
       // Failure handling
       let errorStatusCode = '502'
 
+      console.log('URL', result)
+      const regex = /^(https|http):\/\/([a-z]{1,}\.|)(qiita\.com)(\/(.*)|\?(.*)|$)$/g
+      const tested = regex.test(result)
+      if (tested) {
+        try {
+          http.createServer((req, res) => {
+            res.writeHead(302, {
+              Location: result,
+            })
+            res.end()
+          })
+        } catch (error) {
+          console.log(error)
+          err = 'DIRECTREDIRECT'
+          errorStatusCode = '302'
+        }
+      }
+
       if (result === 'NOTFOUND') {
         err = result
         errorStatusCode = '404'
@@ -601,7 +620,8 @@ export default class HttpServer {
         if (
           errorStatusCode === '404' ||
           errorStatusCode === '500' ||
-          errorStatusCode === '400'
+          errorStatusCode === '400' ||
+          errorStatusCode === '302'
         ) {
           const errorMessage = err.toString()
           // Mocks Lambda errors
@@ -790,6 +810,8 @@ export default class HttpServer {
                   this.#serverless.service.provider.stage,
                   result,
                 ).getContext()
+                console.log('reponseContext')
+                console.dir(reponseContext, { depth: null })
 
                 result = renderVelocityTemplateObject(
                   { root: responseTemplate },

@@ -62,6 +62,19 @@ export default class OfflineEndpoint {
           },
           statusCode: 400,
         },
+        DIRECTREDIRECT: {
+          302: {
+            statusCode: '302',
+          },
+          responseModels: {
+            'application/json;charset=UTF-8': 'Empty',
+          },
+          responseParameters: {},
+          responseTemplates: {
+            'application/json;charset=UTF-8': '',
+          },
+          statusCode: 302,
+        },
       },
       type: 'AWS',
     }
