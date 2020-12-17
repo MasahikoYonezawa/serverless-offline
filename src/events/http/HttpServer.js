@@ -587,9 +587,9 @@ export default class HttpServer {
       let errorStatusCode = '502'
 
       console.log('URL', result)
-      const regex = /^(https|http):\/\/([a-z]{1,}\.|)(qiita\.com)(\/(.*)|\?(.*)|$)$/g
-      const tested = regex.test(result)
-      if (tested) {
+      const regex = new RegExp('/^(ftp|http|https)://[^ "]+$/')
+      if (regex.test(result)) {
+        console.log('Result is URL!!')
         try {
           http.createServer((req, res) => {
             res.writeHead(302, {
