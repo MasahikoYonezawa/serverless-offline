@@ -700,8 +700,12 @@ export default class HttpServer {
 
       /* RESPONSE PARAMETERS PROCCESSING */
       if (responseName === 'REDIRECT' && redirectBody !== '') {
-        chosenResponse.responseTemplates['text/html'] = redirectBody
+        chosenResponse.responseTemplates['text/html'] = String(redirectBody)
       }
+      console.log(
+        'chosenResponse.responseTemplates',
+        chosenResponse.responseTemplates['text/html'],
+      )
       const { responseParameters } = chosenResponse
 
       if (responseParameters) {
