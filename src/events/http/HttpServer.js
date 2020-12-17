@@ -749,6 +749,7 @@ export default class HttpServer {
       let statusCode = 200
 
       if (integration === 'AWS') {
+        console.log('AWS')
         const endpointResponseHeaders =
           (endpoint.response && endpoint.response.headers) || {}
 
@@ -762,10 +763,12 @@ export default class HttpServer {
 
         // If there is a responseTemplate, we apply it to the result
         const { responseTemplates } = chosenResponse
-
+        console.log('responseTemplates')
+        console.dir(responseTemplates, { depth: null })
         if (typeof responseTemplates === 'object') {
+          console.log('responseTemplates is object')
           const responseTemplatesKeys = Object.keys(responseTemplates)
-
+          console.log('responseTemplatesKeys', responseTemplatesKeys)
           if (responseTemplatesKeys.length) {
             // BAD IMPLEMENTATION: first key in responseTemplates
             const responseTemplate = responseTemplates[responseContentType]
@@ -794,7 +797,8 @@ export default class HttpServer {
             }
           }
         }
-
+        console.log('result')
+        console.dir(result, { depth: null })
         /* LAMBDA INTEGRATION HAPIJS RESPONSE CONFIGURATION */
         statusCode = chosenResponse.statusCode || 200
 

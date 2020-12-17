@@ -130,14 +130,10 @@ export default class Endpoint {
     }
 
     fullEndpoint.integration = this._getIntegration(this.#http)
-    serverlessLog('fullEndpoint1')
-    serverlessLog(fullEndpoint)
     if (fullEndpoint.integration === 'AWS') {
       // determine request and response templates or use defaults
       return this._setVmTemplates(fullEndpoint)
     }
-    serverlessLog('fullEndpoint2')
-    serverlessLog(fullEndpoint)
     return fullEndpoint
   }
 }
