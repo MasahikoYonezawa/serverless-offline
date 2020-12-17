@@ -820,6 +820,7 @@ export default class HttpServer {
         response.statusCode = statusCode
 
         if (contentHandling === 'CONVERT_TO_BINARY') {
+          console.log('CASE1')
           response.encoding = 'binary'
           response.source = Buffer.from(result, 'base64')
           response.variety = 'buffer'
@@ -827,14 +828,17 @@ export default class HttpServer {
           typeof result === 'string' &&
           responseContentType !== 'text/html'
         ) {
+          console.log('CASE2')
           response.source = JSON.stringify(result)
         } else if (result && result.body && typeof result.body !== 'string') {
+          console.log('CASE3')
           return this._reply502(
             response,
             'According to the API Gateway specs, the body content must be stringified. Check your Lambda response and make sure you are invoking JSON.stringify(YOUR_CONTENT) on your body object',
             {},
           )
         } else {
+          console.log('CASE4')
           response.source = result
         }
       } else if (integration === 'AWS_PROXY') {
@@ -952,7 +956,7 @@ export default class HttpServer {
       }
 
       console.log('RESPONSE')
-      console.dir(response, { depth: null })
+      // console.dir(response, { depth: null })
 
       // Bon voyage!
       return response
