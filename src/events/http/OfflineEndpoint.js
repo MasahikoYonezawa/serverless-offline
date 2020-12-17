@@ -62,7 +62,7 @@ export default class OfflineEndpoint {
           },
           statusCode: 400,
         },
-        DIRECTREDIRECT: {
+        REDIRECT: {
           302: {
             statusCode: '302',
           },

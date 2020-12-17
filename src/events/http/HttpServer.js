@@ -27,7 +27,7 @@ import {
 import LambdaProxyIntegrationEventV2 from './lambda-events/LambdaProxyIntegrationEventV2.js'
 
 const { parse, stringify } = JSON
-const http = require('http')
+const directRequest = require('request')
 
 export default class HttpServer {
   #lambda = null
@@ -590,19 +590,27 @@ export default class HttpServer {
       const regex = new RegExp('^(ftp|http|https)://[^ "]+$')
       console.log('REGEX', regex)
       console.log('REGEXTEST', regex.test(result))
+      let redirectBody = ''
       if (regex.test(result)) {
         console.log('Result is URL!!')
         try {
-          http.createServer((req, res) => {
-            res.writeHead(302, {
-              Location: result,
-            })
-            res.end()
+          const options = {
+            url: result,
+          }
+          directRequest(options, function callback(
+            error,
+            directResponse,
+            body,
+          ) {
+            if (!error && directResponse.statusCode === 200) {
+              console.log(body)
+              redirectBody = body
+            }
           })
-          process.exit(302)
         } catch (error) {
           console.log(error)
-          err = 'DIRECTREDIRECT'
+        } finally {
+          err = 'REDIRECT'
           errorStatusCode = '302'
         }
       }
@@ -632,16 +640,6 @@ export default class HttpServer {
             errorMessage,
             errorType: err.toString(),
             stackTrace: err.toString(),
-          }
-
-          for (const [key, value] of Object.entries(endpoint.responses)) {
-            if (
-              key !== 'default' &&
-              errorMessage.match(`^${value.selectionPattern || key}$`)
-            ) {
-              responseName = key
-              break
-            }
           }
           responseName = errorMessage
         } else {
@@ -701,7 +699,9 @@ export default class HttpServer {
       console.log('chosenResponse', chosenResponse)
 
       /* RESPONSE PARAMETERS PROCCESSING */
-
+      if (responseName === 'REDIRECT' && redirectBody !== '') {
+        chosenResponse.responseTemplates['text/html'] = redirectBody
+      }
       const { responseParameters } = chosenResponse
 
       if (responseParameters) {
