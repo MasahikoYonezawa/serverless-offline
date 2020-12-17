@@ -587,7 +587,9 @@ export default class HttpServer {
       let errorStatusCode = '502'
 
       console.log('URL', result)
-      const regex = new RegExp('/^(ftp|http|https)://[^ "]+$/')
+      const regex = new RegExp('^(ftp|http|https)://[^ "]+$')
+      console.log('REGEX', regex)
+      console.log('REGEXTEST', regex.test(result))
       if (regex.test(result)) {
         console.log('Result is URL!!')
         try {
