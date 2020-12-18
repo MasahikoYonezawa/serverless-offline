@@ -63,25 +63,29 @@ export default function renderVelocityTemplateObject(templateObject, context) {
   if (typeof toProcess === 'string') {
     toProcess = tryToParseJSON(toProcess)
   }
-  // console.log("tryToParseJSON")
-  // console.dir(toProcess, { depth: null })
+  console.log('tryToParseJSON')
+  console.log(toProcess)
   // Let's check again
   if (isPlainObject(toProcess)) {
+    console.log('process is object')
     entries(toProcess).forEach(([key, value]) => {
       debugLog('Processing key:', key, '- value:', value)
-
       if (typeof value === 'string') {
+        console.log('A')
         result[key] = renderVelocityString(value, context)
         // Go deeper
       } else if (isPlainObject(value)) {
+        console.log('B')
         result[key] = renderVelocityTemplateObject(value, context)
         // This should never happen: value should either be a string or a plain object
       } else {
+        console.log('C')
         result[key] = value
       }
     })
     // Still a string? Maybe it's some complex Velocity stuff
   } else if (typeof toProcess === 'string') {
+    console.log('process is string')
     // If the plugin threw here then you should consider reviewing your template or posting an issue.
     const alternativeResult = tryToParseJSON(
       renderVelocityString(toProcess, context),

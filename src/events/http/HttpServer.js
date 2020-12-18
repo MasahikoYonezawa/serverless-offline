@@ -785,7 +785,7 @@ export default class HttpServer {
       }
 
       let statusCode = 200
-
+      console.log(integration)
       if (integration === 'AWS') {
         console.log('AWS')
         const endpointResponseHeaders =
@@ -828,8 +828,8 @@ export default class HttpServer {
                   { root: responseTemplate },
                   reponseContext,
                 ).root
-                // console.log('renderVelocityTemplateObject')
-                // console.dir(result, { depth: null })
+                console.log('renderVelocityTemplateObject')
+                console.log(result)
               } catch (error) {
                 serverlessLog(
                   `Error while parsing responseTemplate '${responseContentType}' for lambda ${functionKey}:`,
