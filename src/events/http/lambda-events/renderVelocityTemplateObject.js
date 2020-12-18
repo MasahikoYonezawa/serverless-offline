@@ -63,7 +63,8 @@ export default function renderVelocityTemplateObject(templateObject, context) {
   if (typeof toProcess === 'string') {
     toProcess = tryToParseJSON(toProcess)
   }
-
+  // console.log("tryToParseJSON")
+  // console.dir(toProcess, { depth: null })
   // Let's check again
   if (isPlainObject(toProcess)) {
     entries(toProcess).forEach(([key, value]) => {
