@@ -10,6 +10,7 @@ function tryToParseJSON(string) {
   try {
     parsed = JSON.parse(string)
   } catch (err) {
+    console.log('tryToParseJSONErr', err)
     // nothing! Some things are not meant to be parsed.
   }
 
@@ -18,19 +19,22 @@ function tryToParseJSON(string) {
 
 function renderVelocityString(velocityString, context) {
   // runs in a "polluted" (extended) String.prototype replacement scope
-  console.log('parse(velocityString)')
-  console.dir(parse(velocityString), { depth: null })
-  const renderResult = runInPollutedScope(() =>
-    // This line can throw, but this function does not handle errors
-    // Quick args explanation:
-    // { escape: false } --> otherwise would escape &, < and > chars with html (&amp;, &lt; and &gt;)
-    // render(context, null, true) --> null: no custom macros; true: silent mode, just like APIG
-    new Compile(parse(velocityString), { escape: false }).render(
-      context,
-      null,
-      true,
-    ),
-  )
+  let renderResult = ''
+  try {
+    renderResult = runInPollutedScope(() =>
+      // This line can throw, but this function does not handle errors
+      // Quick args explanation:
+      // { escape: false } --> otherwise would escape &, < and > chars with html (&amp;, &lt; and &gt;)
+      // render(context, null, true) --> null: no custom macros; true: silent mode, just like APIG
+      new Compile(parse(velocityString), { escape: false }).render(
+        context,
+        null,
+        true,
+      ),
+    )
+  } catch (error) {
+    console.log('runInPollutedScopeErr', error)
+  }
 
   debugLog('Velocity rendered:', renderResult || 'undefined')
 
@@ -65,8 +69,6 @@ export default function renderVelocityTemplateObject(templateObject, context) {
   if (typeof toProcess === 'string') {
     toProcess = tryToParseJSON(toProcess)
   }
-  console.log('tryToParseJSON')
-  console.log(toProcess)
   // Let's check again
   if (isPlainObject(toProcess)) {
     console.log('process is object')
@@ -77,11 +79,7 @@ export default function renderVelocityTemplateObject(templateObject, context) {
         console.log(key)
         console.log(value)
         console.log(context)
-        if (context.input.body.errorMessage === 'ACCEPTED') {
-          result[key] = value
-        } else {
-          result[key] = renderVelocityString(value, context)
-        }
+        result[key] = renderVelocityString(value, context)
         // Go deeper
       } else if (isPlainObject(value)) {
         console.log('B')

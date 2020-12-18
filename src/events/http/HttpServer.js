@@ -821,9 +821,6 @@ export default class HttpServer {
                   this.#serverless.service.provider.stage,
                   result,
                 ).getContext()
-                console.log('reponseContext')
-                console.dir(reponseContext, { depth: null })
-
                 result = renderVelocityTemplateObject(
                   { root: responseTemplate },
                   reponseContext,
