@@ -18,6 +18,8 @@ function tryToParseJSON(string) {
 
 function renderVelocityString(velocityString, context) {
   // runs in a "polluted" (extended) String.prototype replacement scope
+  console.log('parse(velocityString)')
+  console.dir(parse(velocityString), { depth: null })
   const renderResult = runInPollutedScope(() =>
     // This line can throw, but this function does not handle errors
     // Quick args explanation:
@@ -72,6 +74,7 @@ export default function renderVelocityTemplateObject(templateObject, context) {
       debugLog('Processing key:', key, '- value:', value)
       if (typeof value === 'string') {
         console.log('A')
+        console.log(key)
         console.log(value)
         console.log(context)
         result[key] = renderVelocityString(value, context)
