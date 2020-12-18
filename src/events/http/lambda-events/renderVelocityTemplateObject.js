@@ -72,6 +72,8 @@ export default function renderVelocityTemplateObject(templateObject, context) {
       debugLog('Processing key:', key, '- value:', value)
       if (typeof value === 'string') {
         console.log('A')
+        console.log(value)
+        console.log(context)
         result[key] = renderVelocityString(value, context)
         // Go deeper
       } else if (isPlainObject(value)) {
