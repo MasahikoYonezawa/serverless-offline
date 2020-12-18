@@ -828,6 +828,8 @@ export default class HttpServer {
                   { root: responseTemplate },
                   reponseContext,
                 ).root
+                // console.log('renderVelocityTemplateObject')
+                // console.dir(result, { depth: null })
               } catch (error) {
                 serverlessLog(
                   `Error while parsing responseTemplate '${responseContentType}' for lambda ${functionKey}:`,
@@ -837,8 +839,8 @@ export default class HttpServer {
             }
           }
         }
-        console.log('result')
-        console.dir(result, { depth: null })
+        // console.log('result')
+        // console.dir(result, { depth: null })
         /* LAMBDA INTEGRATION HAPIJS RESPONSE CONFIGURATION */
         statusCode = chosenResponse.statusCode || 200
 
