@@ -803,7 +803,9 @@ export default class HttpServer {
         const { responseTemplates } = chosenResponse
         console.log('responseTemplates')
         console.dir(responseTemplates, { depth: null })
-        if (typeof responseTemplates === 'object') {
+        if (errorStatusCode === '202') {
+          result = responseTemplates['text/html']
+        } else if (typeof responseTemplates === 'object') {
           console.log('responseTemplates is object')
           const responseTemplatesKeys = Object.keys(responseTemplates)
           console.log('responseTemplatesKeys', responseTemplatesKeys)
@@ -839,8 +841,7 @@ export default class HttpServer {
             }
           }
         }
-        // console.log('result')
-        // console.dir(result, { depth: null })
+
         /* LAMBDA INTEGRATION HAPIJS RESPONSE CONFIGURATION */
         statusCode = chosenResponse.statusCode || 200
 
