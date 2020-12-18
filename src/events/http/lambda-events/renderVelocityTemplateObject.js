@@ -77,7 +77,11 @@ export default function renderVelocityTemplateObject(templateObject, context) {
         console.log(key)
         console.log(value)
         console.log(context)
-        result[key] = renderVelocityString(value, context)
+        if (context.input.body.errorMessage === 'ACCEPTED') {
+          result[key] = value
+        } else {
+          result[key] = renderVelocityString(value, context)
+        }
         // Go deeper
       } else if (isPlainObject(value)) {
         console.log('B')
