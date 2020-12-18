@@ -624,7 +624,7 @@ export default class HttpServer {
       } else if (result === 'BADREQUEST') {
         err = result
         errorStatusCode = '400'
-      } else if (result === 'RuaOnlySpException') {
+      } else if (result === 'ACCEPTED') {
         err = result
         errorStatusCode = '202'
       }
