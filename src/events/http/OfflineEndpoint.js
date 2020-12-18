@@ -75,6 +75,19 @@ export default class OfflineEndpoint {
           },
           statusCode: 302,
         },
+        ACCEPTED: {
+          202: {
+            statusCode: '202',
+          },
+          responseModels: {
+            'application/json;charset=UTF-8': 'Empty',
+          },
+          responseParameters: {},
+          responseTemplates: {
+            'application/json;charset=UTF-8': '',
+          },
+          statusCode: 202,
+        },
       },
       type: 'AWS',
     }

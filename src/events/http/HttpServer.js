@@ -624,6 +624,9 @@ export default class HttpServer {
       } else if (result === 'BADREQUEST') {
         err = result
         errorStatusCode = '400'
+      } else if (result === 'RuaOnlySpException') {
+        err = result
+        errorStatusCode = '202'
       }
       console.log('ENDPOINT:')
       console.dir(endpoint, { depth: null })
@@ -632,7 +635,8 @@ export default class HttpServer {
           errorStatusCode === '404' ||
           errorStatusCode === '500' ||
           errorStatusCode === '400' ||
-          errorStatusCode === '302'
+          errorStatusCode === '302' ||
+          errorStatusCode === '202'
         ) {
           const errorMessage = err.toString()
           // Mocks Lambda errors
