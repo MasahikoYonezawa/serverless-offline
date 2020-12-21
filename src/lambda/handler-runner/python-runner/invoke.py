@@ -99,7 +99,6 @@ if __name__ == '__main__':
 
     while True:
         input = json.loads(stdin.readline())
-        print("CONTEXT0", **input.get('context', {}))
         context = FakeLambdaContext(**input.get('context', {}))
         print("EVENT", input['event'])
         print("CONTEXT", context)
