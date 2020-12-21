@@ -105,12 +105,14 @@ if __name__ == '__main__':
         print("CONTEXT", context)
         try:
             result = handler(input['event'], context)
+            print("INVOKE_RESULT", result)
             
         except Exception as e:
-            print("EXCEPTION", str(e))
-            result = e
-            # if 'RuaOnlySpException' in str(e):
-            #     result = 'ACCEPTED'
+            print("EXCEPTION", e)
+            result = str(e)
+            if 'RuaOnlySpException' in str(e):
+                result = json.dumps(e, default = decimal_default_proc)
+                print("RuaOnlySpException_RESULT", result)
         data = {
                 # just an identifier to distinguish between
                 # interesting data (result) and stdout/print
