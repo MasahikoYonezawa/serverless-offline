@@ -11,7 +11,6 @@ from time import strftime, time
 from importlib import import_module
 from decimal import Decimal
 import re
-import requests
 
 def decimal_default_proc(obj):
     if isinstance(obj, Decimal):
@@ -100,7 +99,7 @@ if __name__ == '__main__':
 
     while True:
         input = json.loads(stdin.readline())
-
+        print("CONTEXT0", **input.get('context', {}))
         context = FakeLambdaContext(**input.get('context', {}))
         print("EVENT", input['event'])
         print("CONTEXT", context)
@@ -113,10 +112,10 @@ if __name__ == '__main__':
             pattern = "https?://[\w/:%#\$&\?\(\)~\.=\+\-]+"
             if re.match(pattern, str(e)):
                 print("Is URL:" + str(e))
-                url = str(e)
-                res = requests.get(url)
-                response_status_code = res.status_code
-                print('response_status_code:', response_status_code)
+                # url = str(e)
+            #     res = requests.get(url)
+            #     response_status_code = res.status_code
+            #     print('response_status_code:', response_status_code)
             if 'RuaOnlySpException' in str(e):
                 result = eval(str(e))
             else:
