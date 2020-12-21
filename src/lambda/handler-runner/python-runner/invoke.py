@@ -109,10 +109,12 @@ if __name__ == '__main__':
             
         except Exception as e:
             print("EXCEPTION", e)
-            result = str(e)
             if 'RuaOnlySpException' in str(e):
-                result = json.dumps(e, default = decimal_default_proc)
-                print("RuaOnlySpException_RESULT", result)
+                result = e
+                # result = json.dumps(eval(str(e)), default = decimal_default_proc)
+                # print("RuaOnlySpException_RESULT", result)
+            else:
+                result = str(e)
         data = {
                 # just an identifier to distinguish between
                 # interesting data (result) and stdout/print
