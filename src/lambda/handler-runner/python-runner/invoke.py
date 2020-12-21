@@ -109,8 +109,8 @@ if __name__ == '__main__':
         except Exception as e:
             print("EXCEPTION", str(e))
             result = str(e)
-            if 'RuaOnlySpException' in str(e):
-                result = 'ACCEPTED'
+            # if 'RuaOnlySpException' in str(e):
+            #     result = 'ACCEPTED'
         data = {
                 # just an identifier to distinguish between
                 # interesting data (result) and stdout/print
