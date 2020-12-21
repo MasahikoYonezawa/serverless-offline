@@ -111,6 +111,13 @@ if __name__ == '__main__':
             pattern = "https?://[\w/:%#\$&\?\(\)~\.=\+\-]+"
             if re.match(pattern, str(e)):
                 print("Is URL:" + str(e))
+                url = str(e)
+                lvformHost = 'https://' + input['event']['headers']['Host'].replace('rua', 'lvform')
+                print(lvformHost)
+                requestPath = url.replace(lvformHost, '')
+                input['event']['requestPath'] = requestPath
+                print("EVENT", input['event'])
+                result = handler(input['event'], context)
                 # url = str(e)
             #     res = requests.get(url)
             #     response_status_code = res.status_code
