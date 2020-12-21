@@ -111,8 +111,6 @@ if __name__ == '__main__':
             print("EXCEPTION", e)
             if 'RuaOnlySpException' in str(e):
                 result = eval(str(e))
-                # result = json.dumps(eval(str(e)), default = decimal_default_proc)
-                # print("RuaOnlySpException_RESULT", result)
             else:
                 result = str(e)
         data = {

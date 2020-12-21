@@ -615,6 +615,7 @@ export default class HttpServer {
         }
       }
 
+      let roseResult = ''
       if (result === 'NOTFOUND') {
         err = result
         errorStatusCode = '404'
@@ -624,9 +625,10 @@ export default class HttpServer {
       } else if (result === 'BADREQUEST') {
         err = result
         errorStatusCode = '400'
-      } else if (result === 'ACCEPTED') {
-        err = result
+      } else if (result.type === 'RuaOnlySpException') {
+        err = 'ACCEPTED'
         errorStatusCode = '202'
+        roseResult = result
       }
       console.log('ENDPOINT:')
       console.dir(endpoint, { depth: null })
@@ -635,8 +637,7 @@ export default class HttpServer {
           errorStatusCode === '404' ||
           errorStatusCode === '500' ||
           errorStatusCode === '400' ||
-          errorStatusCode === '302' ||
-          errorStatusCode === '202'
+          errorStatusCode === '302'
         ) {
           const errorMessage = err.toString()
           // Mocks Lambda errors
@@ -644,6 +645,19 @@ export default class HttpServer {
             errorMessage,
             errorType: err.toString(),
             stackTrace: err.toString(),
+          }
+          responseName = errorMessage
+        } else if (errorStatusCode === '202') {
+          const errorMessage = err.toString()
+          // Mocks Lambda errors
+          result = {
+            errorMessage,
+            errorType: err.toString(),
+            stackTrace: err.toString(),
+            type: roseResult.type,
+            dest: roseResult.dest,
+            qdest: roseResult.qdest,
+            cookie_code: roseResult.qdest,
           }
           responseName = errorMessage
         } else {
