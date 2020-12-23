@@ -557,7 +557,6 @@ export default class HttpServer {
 
       console.log('httpEvent')
       console.dir(httpEvent, { depth: null })
-      console.log('httpEvent', handlerPath)
 
       debugLog('event:', event)
       console.log('event', event)
@@ -588,27 +587,16 @@ export default class HttpServer {
       let errorStatusCode = '502'
 
       console.log('RESULT', result)
-
-      let roseResult = ''
-      let dreResult = ''
-      if (result === 'NOTFOUND') {
-        err = result
-        errorStatusCode = '404'
-      } else if (result === 'INVALID') {
-        err = result
-        errorStatusCode = '500'
-      } else if (result === 'BADREQUEST') {
-        err = result
-        errorStatusCode = '400'
-      } else if (result.type === 'RuaOnlySpException') {
-        err = 'ACCEPTED'
-        errorStatusCode = '202'
-        roseResult = result
-      } else if (result.type === 'DirectRedirectException') {
-        err = 'FOUND'
-        errorStatusCode = '302'
-        dreResult = result
-      }
+      const { statusCodes } = httpEvent.response
+      console.log('statusCodes', statusCodes)
+      let originalResult
+      statusCodes.forEach((key, val) => {
+        if (val.pattern.test(result)) {
+          err = result
+          errorStatusCode = key
+          originalResult = result
+        }
+      })
       console.log('ENDPOINT:')
       console.dir(endpoint, { depth: null })
       if (err) {
@@ -632,10 +620,10 @@ export default class HttpServer {
             errorMessage,
             errorType: err.toString(),
             stackTrace: err.toString(),
-            type: roseResult.type,
-            dest: roseResult.dest,
-            qdest: roseResult.qdest,
-            cookie_code: roseResult.qdest,
+            type: originalResult.type,
+            dest: originalResult.dest,
+            qdest: originalResult.qdest,
+            cookie_code: originalResult.qdest,
           }
           responseName = errorMessage
         } else if (errorStatusCode === '302') {
@@ -645,10 +633,10 @@ export default class HttpServer {
             errorMessage,
             errorType: err.toString(),
             stackTrace: err.toString(),
-            type: dreResult.type,
-            dest: dreResult.dest,
+            type: originalResult.type,
+            dest: originalResult.dest,
             headers: {
-              location: dreResult.dest,
+              location: originalResult.dest,
             },
           }
           responseName = errorMessage
