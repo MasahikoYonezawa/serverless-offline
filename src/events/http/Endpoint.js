@@ -78,7 +78,7 @@ export default class Endpoint {
         fep.response.statusCodes['500'].template
       fep.responses.BADREQUEST.responseTemplates[fep.responseContentType] =
         fep.response.statusCodes['400'].template
-      fep.responses.REDIRECT.responseTemplates[fep.responseContentType] =
+      fep.responses.FOUND.responseTemplates[fep.responseContentType] =
         fep.response.statusCodes['302'].template
       fep.responses.ACCEPTED.responseTemplates[fep.responseContentType] =
         fep.response.statusCodes['202'].template

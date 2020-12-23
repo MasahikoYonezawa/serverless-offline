@@ -603,7 +603,7 @@ export default class HttpServer {
         errorStatusCode = '202'
         roseResult = result
       } else if (result.type === 'DirectRedirectException') {
-        err = 'DIRECT'
+        err = 'FOUND'
         errorStatusCode = '302'
         dreResult = result
       }
