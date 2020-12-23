@@ -300,9 +300,6 @@ export default class HttpServer {
   }
 
   createRoutes(functionKey, httpEvent, handler) {
-    console.log('httpEvent')
-    console.dir(httpEvent, { depth: null })
-
     const [handlerPath] = splitHandlerPathAndName(handler)
     const method = httpEvent.method.toUpperCase()
 
@@ -558,7 +555,12 @@ export default class HttpServer {
         event = lambdaProxyIntegrationEvent.create()
       }
 
+      console.log('httpEvent')
+      console.dir(httpEvent, { depth: null })
+      console.log('httpEvent', handlerPath)
+
       debugLog('event:', event)
+      console.log('event', event)
 
       const lambdaFunction = this.#lambda.get(functionKey)
 
