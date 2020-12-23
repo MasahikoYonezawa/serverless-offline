@@ -589,12 +589,10 @@ export default class HttpServer {
       console.log('RESULT', result)
       const { statusCodes } = httpEvent.response
       console.log('statusCodes', statusCodes)
-      let originalResult
-      statusCodes.forEach((key, val) => {
-        if (val.pattern.test(result)) {
+      Object.keys(statusCodes).forEach((key) => {
+        if (statusCodes[key].pattern.test(result)) {
           err = result
           errorStatusCode = key
-          originalResult = result
         }
       })
       console.log('ENDPOINT:')
@@ -613,33 +611,33 @@ export default class HttpServer {
             stackTrace: err.toString(),
           }
           responseName = errorMessage
-        } else if (errorStatusCode === '202') {
-          const errorMessage = err.toString()
-          // Mocks Lambda errors
-          result = {
-            errorMessage,
-            errorType: err.toString(),
-            stackTrace: err.toString(),
-            type: originalResult.type,
-            dest: originalResult.dest,
-            qdest: originalResult.qdest,
-            cookie_code: originalResult.qdest,
-          }
-          responseName = errorMessage
-        } else if (errorStatusCode === '302') {
-          const errorMessage = err.toString()
-          // Mocks Lambda errors
-          result = {
-            errorMessage,
-            errorType: err.toString(),
-            stackTrace: err.toString(),
-            type: originalResult.type,
-            dest: originalResult.dest,
-            headers: {
-              location: originalResult.dest,
-            },
-          }
-          responseName = errorMessage
+          // } else if (errorStatusCode === '202') {
+          //   const errorMessage = err.toString()
+          //   // Mocks Lambda errors
+          //   result = {
+          //     errorMessage,
+          //     errorType: err.toString(),
+          //     stackTrace: err.toString(),
+          //     type: originalResult.type,
+          //     dest: originalResult.dest,
+          //     qdest: originalResult.qdest,
+          //     cookie_code: originalResult.qdest,
+          //   }
+          //   responseName = errorMessage
+          // } else if (errorStatusCode === '302') {
+          //   const errorMessage = err.toString()
+          //   // Mocks Lambda errors
+          //   result = {
+          //     errorMessage,
+          //     errorType: err.toString(),
+          //     stackTrace: err.toString(),
+          //     type: originalResult.type,
+          //     dest: originalResult.dest,
+          //     headers: {
+          //       location: originalResult.dest,
+          //     },
+          //   }
+          //   responseName = errorMessage
         } else {
           // Since the --useChildProcesses option loads the handler in
           // a separate process and serverless-offline communicates with it
