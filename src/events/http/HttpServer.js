@@ -855,6 +855,11 @@ export default class HttpServer {
         response.header('Content-Type', responseContentType, {
           override: false, // Maybe a responseParameter set it already. See #34
         })
+        if (statusCode === '302') {
+          response.header('Location', result.dest, {
+            override: false,
+          })
+        }
 
         response.statusCode = statusCode
 
@@ -925,7 +930,6 @@ export default class HttpServer {
         }
 
         debugLog('headers', headers)
-        console.log('headers', headers)
 
         const parseCookies = (headerValue) => {
           const cookieName = headerValue.slice(0, headerValue.indexOf('='))
