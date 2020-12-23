@@ -11,6 +11,7 @@ from time import strftime, time
 from importlib import import_module
 from decimal import Decimal
 import re
+import urllib
 
 def decimal_default_proc(obj):
     if isinstance(obj, Decimal):
@@ -110,19 +111,8 @@ if __name__ == '__main__':
             print("EXCEPTION", e)
             pattern = "https?://[\w/:%#\$&\?\(\)~\.=\+\-]+"
             if re.match(pattern, str(e)):
-                print("Is URL:" + str(e))
-                url = str(e)
-                lvformHost = 'https://' + input['event']['headers']['Host'].replace('rua', 'lvform')
-                print(lvformHost)
-                requestPath = url.replace(lvformHost, '')
-                input['event']['requestPath'] = requestPath
-                print("EVENT", input['event'])
-                result = handler(input['event'], context)
-                # url = str(e)
-            #     res = requests.get(url)
-            #     response_status_code = res.status_code
-            #     print('response_status_code:', response_status_code)
-            if 'RuaOnlySpException' in str(e):
+                result = {"type": "DirectRedirectException", "dest": str(e)}
+            elif 'RuaOnlySpException' in str(e):
                 result = eval(str(e))
             else:
                 result = str(e)

@@ -27,7 +27,6 @@ import {
 import LambdaProxyIntegrationEventV2 from './lambda-events/LambdaProxyIntegrationEventV2.js'
 
 const { parse, stringify } = JSON
-const directRequest = require('request')
 
 export default class HttpServer {
   #lambda = null
@@ -587,35 +586,9 @@ export default class HttpServer {
       let errorStatusCode = '502'
 
       console.log('RESULT', result)
-      const regex = new RegExp('^(ftp|http|https)://[^ "]+$')
-      console.log('REGEX', regex)
-      console.log('REGEXTEST', regex.test(result))
-      let redirectBody = ''
-      if (regex.test(result)) {
-        console.log('Result is URL!!')
-        try {
-          const options = {
-            url: result,
-          }
-          directRequest(options, function callback(
-            error,
-            directResponse,
-            body,
-          ) {
-            if (!error && directResponse.statusCode === 200) {
-              console.log(body)
-              redirectBody = body
-            }
-          })
-        } catch (error) {
-          console.log(error)
-        } finally {
-          err = 'REDIRECT'
-          errorStatusCode = '302'
-        }
-      }
 
       let roseResult = ''
+      let dreResult = ''
       if (result === 'NOTFOUND') {
         err = result
         errorStatusCode = '404'
@@ -629,6 +602,10 @@ export default class HttpServer {
         err = 'ACCEPTED'
         errorStatusCode = '202'
         roseResult = result
+      } else if (result.type === 'DirectRedirectException') {
+        err = 'DIRECT'
+        errorStatusCode = '302'
+        dreResult = result
       }
       console.log('ENDPOINT:')
       console.dir(endpoint, { depth: null })
@@ -636,8 +613,7 @@ export default class HttpServer {
         if (
           errorStatusCode === '404' ||
           errorStatusCode === '500' ||
-          errorStatusCode === '400' ||
-          errorStatusCode === '302'
+          errorStatusCode === '400'
         ) {
           const errorMessage = err.toString()
           // Mocks Lambda errors
@@ -658,6 +634,17 @@ export default class HttpServer {
             dest: roseResult.dest,
             qdest: roseResult.qdest,
             cookie_code: roseResult.qdest,
+          }
+          responseName = errorMessage
+        } else if (errorStatusCode === '302') {
+          const errorMessage = err.toString()
+          // Mocks Lambda errors
+          result = {
+            errorMessage,
+            errorType: err.toString(),
+            stackTrace: err.toString(),
+            type: dreResult.type,
+            dest: dreResult.dest,
           }
           responseName = errorMessage
         } else {
@@ -717,9 +704,6 @@ export default class HttpServer {
       console.log('chosenResponse', chosenResponse)
 
       /* RESPONSE PARAMETERS PROCCESSING */
-      if (responseName === 'REDIRECT' && redirectBody !== '') {
-        chosenResponse.responseTemplates['text/html'] = String(redirectBody)
-      }
       console.log(
         'chosenResponse.responseTemplates',
         chosenResponse.responseTemplates['text/html'],
@@ -938,6 +922,7 @@ export default class HttpServer {
         }
 
         debugLog('headers', headers)
+        console.log('headers', headers)
 
         const parseCookies = (headerValue) => {
           const cookieName = headerValue.slice(0, headerValue.indexOf('='))
