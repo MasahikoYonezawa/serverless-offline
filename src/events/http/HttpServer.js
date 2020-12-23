@@ -645,6 +645,9 @@ export default class HttpServer {
             stackTrace: err.toString(),
             type: dreResult.type,
             dest: dreResult.dest,
+            headers: {
+              location: dreResult.dest,
+            },
           }
           responseName = errorMessage
         } else {
