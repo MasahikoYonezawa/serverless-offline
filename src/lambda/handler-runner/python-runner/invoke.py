@@ -109,13 +109,13 @@ if __name__ == '__main__':
             
         except Exception as e:
             print("EXCEPTION", e)
-            pattern = "https?://[\w/:%#\$&\?\(\)~\.=\+\-]+"
-            if re.match(pattern, str(e)):
-                result = {"type": "DirectRedirectException", "dest": str(e)}
-            elif 'RuaOnlySpException' in str(e):
-                result = eval(str(e))
-            else:
-                result = str(e)
+            # pattern = "https?://[\w/:%#\$&\?\(\)~\.=\+\-]+"
+            # if re.match(pattern, str(e)):
+            #     result = {"type": "DirectRedirectException", "dest": str(e)}
+            # elif 'RuaOnlySpException' in str(e):
+            #     result = eval(str(e))
+            # else:
+            result = str(e)
         data = {
                 # just an identifier to distinguish between
                 # interesting data (result) and stdout/print
