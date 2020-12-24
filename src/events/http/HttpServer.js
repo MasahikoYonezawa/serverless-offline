@@ -590,7 +590,10 @@ export default class HttpServer {
       const { statusCodes } = httpEvent.response
       console.log('statusCodes', statusCodes)
       Object.keys(statusCodes).forEach((key) => {
-        if (statusCodes[key].pattern.test(result)) {
+        console.log(key)
+        console.log(statusCodes[key].pattern)
+        const { pattern } = statusCodes[key]
+        if (pattern.test(result)) {
           err = result
           errorStatusCode = key
         }
