@@ -2,7 +2,6 @@ import { existsSync, readFileSync } from 'fs'
 import { resolve } from 'path'
 import OfflineEndpoint from './OfflineEndpoint.js'
 import debugLog from '../../debugLog.js'
-import serverlessLog from '../../serverlessLog.js'
 
 const { keys } = Object
 
@@ -68,6 +67,7 @@ export default class Endpoint {
 
       // determine response template
       const resFilename = `${this.#handlerPath}.res.vm`
+
       fep.responseContentType = getResponseContentType(fep)
       debugLog('Response Content-Type ', fep.responseContentType)
 
@@ -78,16 +78,13 @@ export default class Endpoint {
           statusCodes[key].template
       })
       if (fep.response && fep.response.template) {
-        serverlessLog('case1')
         fep.responses.default.responseTemplates[fep.responseContentType] =
           fep.response.template
       } else if (existsSync(resFilename)) {
-        serverlessLog('case2')
         fep.responses.default.responseTemplates[
           fep.responseContentType
         ] = readFile(resFilename)
       } else {
-        serverlessLog('case3')
         fep.responses.default.responseTemplates[
           fep.responseContentType
         ] = defaultResponseTemplate
@@ -123,8 +120,6 @@ export default class Endpoint {
 
   // return fully generated Endpoint
   _generate() {
-    console.log('this.#http')
-    console.dir(this.#http, { depth: null })
     let statusCodes = null
     if (
       this.#http &&
@@ -145,10 +140,12 @@ export default class Endpoint {
     }
 
     fullEndpoint.integration = this._getIntegration(this.#http)
+
     if (fullEndpoint.integration === 'AWS') {
       // determine request and response templates or use defaults
       return this._setVmTemplates(fullEndpoint)
     }
+
     return fullEndpoint
   }
 }

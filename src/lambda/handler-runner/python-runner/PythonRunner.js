@@ -94,14 +94,12 @@ export default class PythonRunner {
   // invoke.py, based on:
   // https://github.com/serverless/serverless/blob/v1.50.0/lib/plugins/aws/invokeLocal/invoke.py
   async run(event, context) {
-    console.log('RUN')
     return new Promise((accept, reject) => {
       const input = stringify({
         context,
         event,
         allowCache: this.#allowCache,
       })
-      console.log(input)
 
       const onErr = (data) => {
         // TODO
@@ -118,7 +116,6 @@ export default class PythonRunner {
           }
           return null
         } catch (err) {
-          console.log(err)
           return reject(err)
         }
       }

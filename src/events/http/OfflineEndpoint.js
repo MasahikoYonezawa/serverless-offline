@@ -46,8 +46,6 @@ export default class OfflineEndpoint {
         statusCode: key,
       }
     })
-    console.log('offlineEndPoint')
-    console.dir(offlineEndPoint, { depth: null })
     return offlineEndPoint
   }
 }

@@ -10,7 +10,6 @@ function tryToParseJSON(string) {
   try {
     parsed = JSON.parse(string)
   } catch (err) {
-    console.log('tryToParseJSONErr', err)
     // nothing! Some things are not meant to be parsed.
   }
 
@@ -19,22 +18,17 @@ function tryToParseJSON(string) {
 
 function renderVelocityString(velocityString, context) {
   // runs in a "polluted" (extended) String.prototype replacement scope
-  let renderResult = ''
-  try {
-    renderResult = runInPollutedScope(() =>
-      // This line can throw, but this function does not handle errors
-      // Quick args explanation:
-      // { escape: false } --> otherwise would escape &, < and > chars with html (&amp;, &lt; and &gt;)
-      // render(context, null, true) --> null: no custom macros; true: silent mode, just like APIG
-      new Compile(parse(velocityString), { escape: false }).render(
-        context,
-        null,
-        true,
-      ),
-    )
-  } catch (error) {
-    console.log('runInPollutedScopeErr', error)
-  }
+  const renderResult = runInPollutedScope(() =>
+    // This line can throw, but this function does not handle errors
+    // Quick args explanation:
+    // { escape: false } --> otherwise would escape &, < and > chars with html (&amp;, &lt; and &gt;)
+    // render(context, null, true) --> null: no custom macros; true: silent mode, just like APIG
+    new Compile(parse(velocityString), { escape: false }).render(
+      context,
+      null,
+      true,
+    ),
+  )
 
   debugLog('Velocity rendered:', renderResult || 'undefined')
 
@@ -69,30 +63,23 @@ export default function renderVelocityTemplateObject(templateObject, context) {
   if (typeof toProcess === 'string') {
     toProcess = tryToParseJSON(toProcess)
   }
+
   // Let's check again
   if (isPlainObject(toProcess)) {
-    console.log('process is object')
     entries(toProcess).forEach(([key, value]) => {
       debugLog('Processing key:', key, '- value:', value)
       if (typeof value === 'string') {
-        console.log('A')
-        console.log(key)
-        console.log(value)
-        console.log(context)
         result[key] = renderVelocityString(value, context)
         // Go deeper
       } else if (isPlainObject(value)) {
-        console.log('B')
         result[key] = renderVelocityTemplateObject(value, context)
         // This should never happen: value should either be a string or a plain object
       } else {
-        console.log('C')
         result[key] = value
       }
     })
     // Still a string? Maybe it's some complex Velocity stuff
   } else if (typeof toProcess === 'string') {
-    console.log('process is string')
     // If the plugin threw here then you should consider reviewing your template or posting an issue.
     const alternativeResult = tryToParseJSON(
       renderVelocityString(toProcess, context),

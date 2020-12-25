@@ -10,8 +10,6 @@ import os
 from time import strftime, time
 from importlib import import_module
 from decimal import Decimal
-import re
-import urllib
 
 def decimal_default_proc(obj):
     if isinstance(obj, Decimal):
@@ -100,21 +98,11 @@ if __name__ == '__main__':
 
     while True:
         input = json.loads(stdin.readline())
+
         context = FakeLambdaContext(**input.get('context', {}))
-        print("EVENT", input['event'])
-        print("CONTEXT", context)
         try:
             result = handler(input['event'], context)
-            print("INVOKE_RESULT", result)
-            
         except Exception as e:
-            print("EXCEPTION", e)
-            # pattern = "https?://[\w/:%#\$&\?\(\)~\.=\+\-]+"
-            # if re.match(pattern, str(e)):
-            #     result = {"type": "DirectRedirectException", "dest": str(e)}
-            # elif 'RuaOnlySpException' in str(e):
-            #     result = eval(str(e))
-            # else:
             result = str(e)
         data = {
                 # just an identifier to distinguish between
