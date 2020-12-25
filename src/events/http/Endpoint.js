@@ -123,6 +123,8 @@ export default class Endpoint {
 
   // return fully generated Endpoint
   _generate() {
+    console.log('this.#http')
+    console.dir(this.#http, { depth: null })
     const offlineEndpoint = new OfflineEndpoint()
 
     const fullEndpoint = {

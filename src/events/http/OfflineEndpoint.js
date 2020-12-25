@@ -1,6 +1,6 @@
 export default class OfflineEndpoint {
   constructor() {
-    return {
+    const offlineEndPoint = {
       apiKeyRequired: false,
       authorizationType: 'none',
       authorizerFunction: false,
@@ -91,5 +91,6 @@ export default class OfflineEndpoint {
       },
       type: 'AWS',
     }
+    return offlineEndPoint
   }
 }
