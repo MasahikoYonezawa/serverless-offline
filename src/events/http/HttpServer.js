@@ -593,7 +593,8 @@ export default class HttpServer {
         console.log(key)
         console.log(statusCodes[key].pattern)
         const { pattern } = statusCodes[key]
-        if (pattern.test(result)) {
+        const regex = new RegExp(pattern)
+        if (regex.test(result)) {
           err = result
           errorStatusCode = key
         }
