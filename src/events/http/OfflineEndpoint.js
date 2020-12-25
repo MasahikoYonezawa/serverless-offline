@@ -1,5 +1,5 @@
 export default class OfflineEndpoint {
-  constructor(statusCodes) {
+  constructor(statusCodes = null) {
     const offlineEndPoint = {
       apiKeyRequired: false,
       authorizationType: 'none',
@@ -26,6 +26,11 @@ export default class OfflineEndpoint {
       },
       type: 'AWS',
     }
+
+    if (statusCodes === null) {
+      return offlineEndPoint
+    }
+
     Object.keys(statusCodes).forEach((key) => {
       offlineEndPoint.responses[key] = {
         responseModels: {
