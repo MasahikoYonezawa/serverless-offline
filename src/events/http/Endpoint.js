@@ -125,7 +125,8 @@ export default class Endpoint {
   _generate() {
     console.log('this.#http')
     console.dir(this.#http, { depth: null })
-    const offlineEndpoint = new OfflineEndpoint(this.#http.response.statusCodes)
+    const { statusCodes } = this.#http.response
+    const offlineEndpoint = new OfflineEndpoint(statusCodes)
 
     const fullEndpoint = {
       ...offlineEndpoint,
