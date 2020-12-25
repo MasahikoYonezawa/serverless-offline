@@ -102,6 +102,7 @@ if __name__ == '__main__':
         context = FakeLambdaContext(**input.get('context', {}))
         try:
             result = handler(input['event'], context)
+
         except Exception as e:
             result = str(e)
         data = {
@@ -109,5 +110,6 @@ if __name__ == '__main__':
                 # interesting data (result) and stdout/print
                 '__offline_payload__': result
             }
+
         sys.stdout.write(json.dumps(data, default = decimal_default_proc))
         sys.stdout.write('\n')

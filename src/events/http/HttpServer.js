@@ -667,6 +667,7 @@ export default class HttpServer {
       const chosenResponse = endpoint.responses[responseName]
 
       /* RESPONSE PARAMETERS PROCCESSING */
+
       const { responseParameters } = chosenResponse
 
       if (responseParameters) {
@@ -742,6 +743,7 @@ export default class HttpServer {
       }
 
       let statusCode = 200
+
       if (integration === 'AWS') {
         const endpointResponseHeaders =
           (endpoint.response && endpoint.response.headers) || {}
@@ -756,8 +758,10 @@ export default class HttpServer {
 
         // If there is a responseTemplate, we apply it to the result
         const { responseTemplates } = chosenResponse
+
         if (typeof responseTemplates === 'object') {
           const responseTemplatesKeys = Object.keys(responseTemplates)
+
           if (responseTemplatesKeys.length) {
             // BAD IMPLEMENTATION: first key in responseTemplates
             const responseTemplate = responseTemplates[responseContentType]

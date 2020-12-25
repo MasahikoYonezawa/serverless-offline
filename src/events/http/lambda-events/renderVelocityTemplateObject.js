@@ -68,6 +68,7 @@ export default function renderVelocityTemplateObject(templateObject, context) {
   if (isPlainObject(toProcess)) {
     entries(toProcess).forEach(([key, value]) => {
       debugLog('Processing key:', key, '- value:', value)
+
       if (typeof value === 'string') {
         result[key] = renderVelocityString(value, context)
         // Go deeper
