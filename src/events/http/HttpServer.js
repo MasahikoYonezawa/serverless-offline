@@ -589,60 +589,31 @@ export default class HttpServer {
       console.log('RESULT', result)
       const { statusCodes } = httpEvent.response
       console.log('statusCodes', statusCodes)
+      let errorList = ''
       Object.keys(statusCodes).forEach((key) => {
         console.log(key)
         console.log(statusCodes[key].pattern)
         const { pattern } = statusCodes[key]
-        const regex = new RegExp(pattern)
+        const regex = new RegExp(`^${pattern}$`)
+        console.log(regex)
         if (regex.test(result)) {
-          err = result
+          try {
+            errorList = JSON.parse(result)
+          } catch (e) {
+            errorList = { type: result }
+            console.error(e)
+          }
+          console.log(errorList)
+          err = errorList.type
           errorStatusCode = key
         }
       })
+      console.log(err)
+      console.log(errorStatusCode)
       console.log('ENDPOINT:')
       console.dir(endpoint, { depth: null })
       if (err) {
-        if (
-          errorStatusCode === '404' ||
-          errorStatusCode === '500' ||
-          errorStatusCode === '400'
-        ) {
-          const errorMessage = err.toString()
-          // Mocks Lambda errors
-          result = {
-            errorMessage,
-            errorType: err.toString(),
-            stackTrace: err.toString(),
-          }
-          responseName = errorMessage
-          // } else if (errorStatusCode === '202') {
-          //   const errorMessage = err.toString()
-          //   // Mocks Lambda errors
-          //   result = {
-          //     errorMessage,
-          //     errorType: err.toString(),
-          //     stackTrace: err.toString(),
-          //     type: originalResult.type,
-          //     dest: originalResult.dest,
-          //     qdest: originalResult.qdest,
-          //     cookie_code: originalResult.qdest,
-          //   }
-          //   responseName = errorMessage
-          // } else if (errorStatusCode === '302') {
-          //   const errorMessage = err.toString()
-          //   // Mocks Lambda errors
-          //   result = {
-          //     errorMessage,
-          //     errorType: err.toString(),
-          //     stackTrace: err.toString(),
-          //     type: originalResult.type,
-          //     dest: originalResult.dest,
-          //     headers: {
-          //       location: originalResult.dest,
-          //     },
-          //   }
-          //   responseName = errorMessage
-        } else {
+        if (errorStatusCode === '502') {
           // Since the --useChildProcesses option loads the handler in
           // a separate process and serverless-offline communicates with it
           // over IPC, we are unable to catch JavaScript unhandledException errors
@@ -690,8 +661,21 @@ export default class HttpServer {
               break
             }
           }
+        } else {
+          const errorMessage = err.toString()
+          // Mocks Lambda errors
+          result = {
+            errorMessage,
+            errorType: err.toString(),
+            stackTrace: err.toString(),
+          }
+          responseName = errorMessage
+          errorList.foreEach((key) => {
+            result.key = errorList[key]
+          })
         }
       }
+      console.log(result)
       console.log('RESPONSENAME', responseName)
 
       debugLog(`Using response '${responseName}'`)
