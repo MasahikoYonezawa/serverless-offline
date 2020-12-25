@@ -126,8 +126,16 @@ export default class Endpoint {
     console.log('this.#http')
     console.dir(this.#http, { depth: null })
     let statusCodes = null
-    if (this.#http.response.statusCodes !== undefined) {
-      statusCodes = this.#http.response.statusCodes
+    if (
+      this.#http &&
+      Object.prototype.hasOwnProperty.call(this.#http, 'response')
+    ) {
+      if (
+        this.#http.response &&
+        Object.prototype.hasOwnProperty.call(this.#http.response, 'statusCodes')
+      ) {
+        statusCodes = this.#http.response.statusCodes
+      }
     }
     const offlineEndpoint = new OfflineEndpoint(statusCodes)
 
