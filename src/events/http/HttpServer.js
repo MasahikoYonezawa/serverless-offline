@@ -604,7 +604,7 @@ export default class HttpServer {
             console.error(e)
           }
           console.log(errorList)
-          err = errorList.type
+          err = result
           errorStatusCode = key
         }
       })
@@ -669,7 +669,7 @@ export default class HttpServer {
             errorType: err.toString(),
             stackTrace: err.toString(),
           }
-          responseName = errorMessage
+          responseName = errorStatusCode
           Object.keys(errorList).forEach((key) => {
             result[key] = errorList[key]
           })

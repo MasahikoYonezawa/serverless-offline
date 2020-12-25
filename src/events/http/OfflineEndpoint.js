@@ -23,7 +23,7 @@ export default class OfflineEndpoint {
           },
           statusCode: 200,
         },
-        NOTFOUND: {
+        404: {
           404: {
             statusCode: '404',
           },
@@ -36,7 +36,7 @@ export default class OfflineEndpoint {
           },
           statusCode: 404,
         },
-        INVALID: {
+        500: {
           500: {
             statusCode: '500',
           },
@@ -49,7 +49,7 @@ export default class OfflineEndpoint {
           },
           statusCode: 500,
         },
-        BADREQUEST: {
+        400: {
           400: {
             statusCode: '400',
           },
@@ -62,7 +62,7 @@ export default class OfflineEndpoint {
           },
           statusCode: 400,
         },
-        FOUND: {
+        302: {
           302: {
             statusCode: '302',
           },
@@ -75,7 +75,7 @@ export default class OfflineEndpoint {
           },
           statusCode: 302,
         },
-        ACCEPTED: {
+        202: {
           202: {
             statusCode: '202',
           },

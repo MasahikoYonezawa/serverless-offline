@@ -72,16 +72,11 @@ export default class Endpoint {
       debugLog('Response Content-Type ', fep.responseContentType)
 
       // load response template from http response template, or load file if exists other use default
-      fep.responses.NOTFOUND.responseTemplates[fep.responseContentType] =
-        fep.response.statusCodes['404'].template
-      fep.responses.INVALID.responseTemplates[fep.responseContentType] =
-        fep.response.statusCodes['500'].template
-      fep.responses.BADREQUEST.responseTemplates[fep.responseContentType] =
-        fep.response.statusCodes['400'].template
-      fep.responses.FOUND.responseTemplates[fep.responseContentType] =
-        fep.response.statusCodes['302'].template
-      fep.responses.ACCEPTED.responseTemplates[fep.responseContentType] =
-        fep.response.statusCodes['202'].template
+      const { statusCodes } = fep.response
+      Object.keys(statusCodes).forEach((key) => {
+        fep.responses[key].responseTemplates[fep.responseContentType] =
+          statusCodes[key].template
+      })
       if (fep.response && fep.response.template) {
         serverlessLog('case1')
         fep.responses.default.responseTemplates[fep.responseContentType] =
