@@ -670,7 +670,7 @@ export default class HttpServer {
             stackTrace: err.toString(),
           }
           responseName = errorMessage
-          Object.keys(errorList).foreEach((key) => {
+          Object.keys(errorList).forEach((key) => {
             result[key] = errorList[key]
           })
         }
