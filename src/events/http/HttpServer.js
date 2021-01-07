@@ -583,30 +583,37 @@ export default class HttpServer {
       let errorStatusCode = '502'
 
       let errorList = ''
+      console.log('httpEvent')
+      console.dir(httpEvent, { depth: null })
       console.log('httpEvent.response')
       console.dir(httpEvent.response, { depth: null })
-      if (
-        Object.prototype.hasOwnProperty.call(httpEvent.response, 'statusCodes')
-      ) {
-        const { statusCodes } = httpEvent.response
-        console.log('statusCodes', statusCodes)
-        Object.keys(statusCodes).forEach((key) => {
-          console.log('key', key)
-          const { pattern } = statusCodes[key]
-          console.log('pattern', pattern)
-          const regex = new RegExp(`^${pattern}$`)
-          if (regex.test(result)) {
-            try {
-              errorList = JSON.parse(result)
-            } catch (e) {
-              errorList = { type: result }
-              console.error(e)
+      if (Object.prototype.hasOwnProperty.call(httpEvent, 'response')) {
+        if (
+          Object.prototype.hasOwnProperty.call(
+            httpEvent.response,
+            'statusCodes',
+          )
+        ) {
+          const { statusCodes } = httpEvent.response
+          console.log('statusCodes', statusCodes)
+          Object.keys(statusCodes).forEach((key) => {
+            console.log('key', key)
+            const { pattern } = statusCodes[key]
+            console.log('pattern', pattern)
+            const regex = new RegExp(`^${pattern}$`)
+            if (regex.test(result)) {
+              try {
+                errorList = JSON.parse(result)
+              } catch (e) {
+                errorList = { type: result }
+                console.error(e)
+              }
+              console.log('errorList', errorList)
+              err = result
+              errorStatusCode = key
             }
-            console.log('errorList', errorList)
-            err = result
-            errorStatusCode = key
-          }
-        })
+          })
+        }
       }
 
       let errorMessage = ''
