@@ -844,7 +844,8 @@ export default class HttpServer {
           response.variety = 'buffer'
         } else if (
           typeof result === 'string' &&
-          responseContentType !== 'text/html'
+          responseContentType !== 'text/html' &&
+          responseContentType !== 'text/javascript'
         ) {
           response.source = JSON.stringify(result)
         } else if (result && result.body && typeof result.body !== 'string') {
@@ -936,7 +937,11 @@ export default class HttpServer {
           override: false,
         })
 
-        if (typeof result === 'string' && responseContentType !== 'text/html') {
+        if (
+          typeof result === 'string' &&
+          responseContentType !== 'text/html' &&
+          responseContentType !== 'text/javascript'
+        ) {
           response.source = JSON.stringify(result)
         } else if (result && typeof result.body !== 'undefined') {
           if (result.isBase64Encoded) {
