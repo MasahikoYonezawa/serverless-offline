@@ -603,6 +603,7 @@ export default class HttpServer {
         }
       })
 
+      let errorMessage = ''
       if (err) {
         if (errorStatusCode === '502') {
           // Since the --useChildProcesses option loads the handler in
@@ -619,7 +620,7 @@ export default class HttpServer {
             )
           }
 
-          const errorMessage = (err.message || err).toString()
+          errorMessage = (err.message || err).toString()
 
           const re = /\[(\d{3})]/
           const found = errorMessage.match(re)
@@ -653,7 +654,7 @@ export default class HttpServer {
             }
           }
         } else {
-          const errorMessage = err.toString()
+          errorMessage = err.toString()
           // Mocks Lambda errors
           result = {
             errorMessage,
@@ -814,9 +815,9 @@ export default class HttpServer {
           override: false, // Maybe a responseParameter set it already. See #34
         })
         console.log('statusCode', statusCode)
-        console.log('resylt', result)
+        console.log('errorMessage', errorMessage)
         if (statusCode === '302') {
-          response.header('Location', result.errorType, {
+          response.header('Location', errorMessage, {
             override: false,
           })
         }
