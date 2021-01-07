@@ -582,26 +582,31 @@ export default class HttpServer {
       // Failure handling
       let errorStatusCode = '502'
 
-      const { statusCodes } = httpEvent.response
-      console.log('statusCodes', statusCodes)
       let errorList = ''
-      Object.keys(statusCodes).forEach((key) => {
-        console.log('key', key)
-        const { pattern } = statusCodes[key]
-        console.log('pattern', pattern)
-        const regex = new RegExp(`^${pattern}$`)
-        if (regex.test(result)) {
-          try {
-            errorList = JSON.parse(result)
-          } catch (e) {
-            errorList = { type: result }
-            console.error(e)
+      if (
+        httpEvent.response.statusCodes !== null &&
+        httpEvent.response.statusCodes !== undefined
+      ) {
+        const { statusCodes } = httpEvent.response
+        console.log('statusCodes', statusCodes)
+        Object.keys(statusCodes).forEach((key) => {
+          console.log('key', key)
+          const { pattern } = statusCodes[key]
+          console.log('pattern', pattern)
+          const regex = new RegExp(`^${pattern}$`)
+          if (regex.test(result)) {
+            try {
+              errorList = JSON.parse(result)
+            } catch (e) {
+              errorList = { type: result }
+              console.error(e)
+            }
+            console.log('errorList', errorList)
+            err = result
+            errorStatusCode = key
           }
-          console.log('errorList', errorList)
-          err = result
-          errorStatusCode = key
-        }
-      })
+        })
+      }
 
       let errorMessage = ''
       if (err) {
