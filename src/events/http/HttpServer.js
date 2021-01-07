@@ -583,9 +583,12 @@ export default class HttpServer {
       let errorStatusCode = '502'
 
       const { statusCodes } = httpEvent.response
+      console.log('statusCodes', statusCodes)
       let errorList = ''
       Object.keys(statusCodes).forEach((key) => {
+        console.log('key', key)
         const { pattern } = statusCodes[key]
+        console.log('pattern', pattern)
         const regex = new RegExp(`^${pattern}$`)
         if (regex.test(result)) {
           try {
@@ -594,6 +597,7 @@ export default class HttpServer {
             errorList = { type: result }
             console.error(e)
           }
+          console.log('errorList', errorList)
           err = result
           errorStatusCode = key
         }
@@ -658,6 +662,7 @@ export default class HttpServer {
           }
           responseName = errorStatusCode
           Object.keys(errorList).forEach((key) => {
+            console.log('key2', key)
             result[key] = errorList[key]
           })
         }

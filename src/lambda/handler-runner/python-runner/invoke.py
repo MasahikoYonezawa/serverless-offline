@@ -104,6 +104,7 @@ if __name__ == '__main__':
             result = handler(input['event'], context)
 
         except Exception as e:
+            print("exception", str(e))
             result = str(e)
         data = {
                 # just an identifier to distinguish between
