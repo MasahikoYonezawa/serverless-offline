@@ -813,8 +813,10 @@ export default class HttpServer {
         response.header('Content-Type', responseContentType, {
           override: false, // Maybe a responseParameter set it already. See #34
         })
+        console.log('statusCode', statusCode)
+        console.log('resylt', result)
         if (statusCode === '302') {
-          response.header('Location', result.dest, {
+          response.header('Location', result.errorType, {
             override: false,
           })
         }
