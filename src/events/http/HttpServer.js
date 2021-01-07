@@ -583,9 +583,10 @@ export default class HttpServer {
       let errorStatusCode = '502'
 
       let errorList = ''
+      console.log('httpEvent.response')
+      console.dir(httpEvent.response, { depth: null })
       if (
-        httpEvent.response.statusCodes !== null &&
-        httpEvent.response.statusCodes !== undefined
+        Object.prototype.hasOwnProperty.call(httpEvent.response, 'statusCodes')
       ) {
         const { statusCodes } = httpEvent.response
         console.log('statusCodes', statusCodes)
