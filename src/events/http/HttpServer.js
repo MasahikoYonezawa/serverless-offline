@@ -569,6 +569,8 @@ export default class HttpServer {
       } catch (_err) {
         err = _err
       }
+      console.log('result', result)
+      console.log('err', err)
 
       // const processResponse = (err, data) => {
       // Everything in this block happens once the lambda function has resolved
