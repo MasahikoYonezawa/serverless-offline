@@ -72,11 +72,19 @@ export default class Endpoint {
       debugLog('Response Content-Type ', fep.responseContentType)
 
       // load response template from http response template, or load file if exists other use default
-      const { statusCodes } = fep.response
-      Object.keys(statusCodes).forEach((key) => {
-        fep.responses[key].responseTemplates[fep.responseContentType] =
-          statusCodes[key].template
-      })
+      if (fep && Object.prototype.hasOwnProperty.call(fep, 'response')) {
+        if (
+          fep.response &&
+          Object.prototype.hasOwnProperty.call(fep.response, 'statusCodes')
+        ) {
+          const { statusCodes } = fep.response
+          Object.keys(statusCodes).forEach((key) => {
+            fep.responses[key].responseTemplates[fep.responseContentType] =
+              statusCodes[key].template
+          })
+        }
+      }
+
       if (fep.response && fep.response.template) {
         fep.responses.default.responseTemplates[fep.responseContentType] =
           fep.response.template
