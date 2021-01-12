@@ -571,6 +571,17 @@ export default class HttpServer {
       }
       console.log('result', result)
       console.log('err', err)
+      let resultStatus = ''
+      try {
+        const resultList = JSON.parse(result)
+        console.log('resultList', resultList)
+        resultStatus = resultList.status
+        result = resultList.value
+      } catch (e) {
+        console.error(e)
+      }
+      console.log('resultStatus', resultStatus)
+      console.log('result2', result)
 
       // const processResponse = (err, data) => {
       // Everything in this block happens once the lambda function has resolved
@@ -590,34 +601,37 @@ export default class HttpServer {
       console.dir(httpEvent, { depth: null })
       console.log('httpEvent.response')
       console.dir(httpEvent.response, { depth: null })
-      if (Object.prototype.hasOwnProperty.call(httpEvent, 'response')) {
-        if (
-          Object.prototype.hasOwnProperty.call(
-            httpEvent.response,
-            'statusCodes',
-          )
-        ) {
-          const { statusCodes } = httpEvent.response
-          console.log('statusCodes', statusCodes)
-          Object.keys(statusCodes).forEach((key) => {
-            console.log('key', key)
-            const { pattern } = statusCodes[key]
-            console.log('pattern', pattern)
-            const regex = new RegExp(`^${pattern}$`)
-            if (regex.test(result)) {
-              try {
-                errorList = JSON.parse(result)
-              } catch (e) {
-                errorList = { type: result }
-                console.error(e)
+      if (resultStatus === 'fail') {
+        if (Object.prototype.hasOwnProperty.call(httpEvent, 'response')) {
+          if (
+            Object.prototype.hasOwnProperty.call(
+              httpEvent.response,
+              'statusCodes',
+            )
+          ) {
+            const { statusCodes } = httpEvent.response
+            console.log('statusCodes', statusCodes)
+            Object.keys(statusCodes).forEach((key) => {
+              console.log('key', key)
+              const { pattern } = statusCodes[key]
+              console.log('pattern', pattern)
+              const regex = new RegExp(`^${pattern}$`)
+              if (regex.test(result)) {
+                try {
+                  errorList = JSON.parse(result)
+                } catch (e) {
+                  errorList = { type: result }
+                  console.error(e)
+                }
+                console.log('errorList', errorList)
+                err = result
+                errorStatusCode = key
               }
-              console.log('errorList', errorList)
-              err = result
-              errorStatusCode = key
-            }
-          })
+            })
+          }
         }
       }
+
       if (err) {
         if (errorStatusCode === '502') {
           // Since the --useChildProcesses option loads the handler in

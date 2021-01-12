@@ -101,11 +101,10 @@ if __name__ == '__main__':
 
         context = FakeLambdaContext(**input.get('context', {}))
         try:
-            result = handler(input['event'], context)
-
+            result = {'status': 'success', 'value': handler(input['event'], context)}
         except Exception as e:
             print("exception", str(e))
-            result = str(e)
+            result = {'status':'fail', 'value': str(e)}
         data = {
                 # just an identifier to distinguish between
                 # interesting data (result) and stdout/print
