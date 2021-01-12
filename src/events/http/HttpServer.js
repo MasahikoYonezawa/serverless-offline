@@ -569,8 +569,7 @@ export default class HttpServer {
       } catch (_err) {
         err = _err
       }
-      console.log('result', result)
-      console.log('err', err)
+
       let resultStatus = ''
       try {
         resultStatus = result.status
@@ -578,8 +577,6 @@ export default class HttpServer {
       } catch (e) {
         console.error(e)
       }
-      console.log('resultStatus', resultStatus)
-      console.log('result2', result)
 
       // const processResponse = (err, data) => {
       // Everything in this block happens once the lambda function has resolved
@@ -595,10 +592,6 @@ export default class HttpServer {
       let errorList = ''
       let errorMessage = ''
 
-      console.log('httpEvent')
-      console.dir(httpEvent, { depth: null })
-      console.log('httpEvent.response')
-      console.dir(httpEvent.response, { depth: null })
       if (resultStatus === 'fail') {
         if (Object.prototype.hasOwnProperty.call(httpEvent, 'response')) {
           if (
@@ -608,11 +601,8 @@ export default class HttpServer {
             )
           ) {
             const { statusCodes } = httpEvent.response
-            console.log('statusCodes', statusCodes)
             Object.keys(statusCodes).forEach((key) => {
-              console.log('key', key)
               const { pattern } = statusCodes[key]
-              console.log('pattern', pattern)
               const regex = new RegExp(`^${pattern}$`)
               if (regex.test(result)) {
                 try {
@@ -621,7 +611,6 @@ export default class HttpServer {
                   errorList = { type: result }
                   console.error(e)
                 }
-                console.log('errorList', errorList)
                 err = result
                 errorStatusCode = key
               }
@@ -840,9 +829,9 @@ export default class HttpServer {
         response.header('Content-Type', responseContentType, {
           override: false, // Maybe a responseParameter set it already. See #34
         })
-        console.log('statusCode', statusCode)
-        console.log('errorMessage', errorMessage)
-        if (statusCode === '302') {
+
+        const status30X = ['301', '302', '303', '305', '307', '308']
+        if (status30X.includes(statusCode)) {
           response.header('Location', errorMessage, {
             override: false,
           })
