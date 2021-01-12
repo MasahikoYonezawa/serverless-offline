@@ -573,10 +573,8 @@ export default class HttpServer {
       console.log('err', err)
       let resultStatus = ''
       try {
-        const resultList = JSON.parse(result)
-        console.log('resultList', resultList)
-        resultStatus = resultList.status
-        result = resultList.value
+        resultStatus = result.status
+        result = result.value
       } catch (e) {
         console.error(e)
       }
