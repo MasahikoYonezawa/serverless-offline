@@ -101,16 +101,15 @@ if __name__ == '__main__':
 
         context = FakeLambdaContext(**input.get('context', {}))
         try:
-            result = {"status": "success", "value": handler(input['event'], context)}
+            result = {'status': 'success', 'value': handler(input['event'], context)}
         except Exception as e:
             print("exception", str(e))
-            result = {"status":"fail", "value": str(e)}
-        print("result", result)
+            result = {'status':'fail', 'value': str(e)}
         data = {
                 # just an identifier to distinguish between
                 # interesting data (result) and stdout/print
                 '__offline_payload__': result
             }
-        print("data", json.dumps(data, default = decimal_default_proc))
+
         sys.stdout.write(json.dumps(data, default = decimal_default_proc))
         sys.stdout.write('\n')
