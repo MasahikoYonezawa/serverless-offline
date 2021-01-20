@@ -111,6 +111,6 @@ if __name__ == '__main__':
                 # interesting data (result) and stdout/print
                 '__offline_payload__': result
             }
-
+        print("data", json.dumps(data, default = decimal_default_proc))
         sys.stdout.write(json.dumps(data, default = decimal_default_proc))
         sys.stdout.write('\n')

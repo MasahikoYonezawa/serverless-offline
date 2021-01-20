@@ -606,7 +606,8 @@ export default class HttpServer {
               const regex = new RegExp(`^${pattern}$`)
               if (regex.test(result)) {
                 try {
-                  errorList = JSON.parse(result)
+                  console.log('result2', result)
+                  // errorList = JSON.parse(result)
                 } catch (e) {
                   errorList = { type: result }
                   console.error(e)
