@@ -601,24 +601,29 @@ export default class HttpServer {
             )
           ) {
             const { statusCodes } = httpEvent.response
-            Object.keys(statusCodes).forEach((key) => {
-              const { pattern } = statusCodes[key]
-              const regex = new RegExp(`^${pattern}$`)
-              if (regex.test(result)) {
-                try {
-                  console.log('result2', result)
-                  // errorList = JSON.parse(result)
-                } catch (e) {
-                  errorList = { type: result }
-                  console.error(e)
+            try {
+              Object.keys(statusCodes).forEach((key) => {
+                const { pattern } = statusCodes[key]
+                const regex = new RegExp(`^${pattern}$`)
+                if (regex.test(result)) {
+                  try {
+                    console.log('result2', result)
+                    errorList = JSON.parse(result)
+                  } catch (e) {
+                    errorList = { type: result }
+                    console.error(e)
+                  }
+                  err = result
+                  errorStatusCode = key
                 }
-                err = result
-                errorStatusCode = key
-              }
-            })
+              })
+            } catch (error) {
+              console.error(error)
+            }
           }
         }
       }
+      console.log('errorList', errorList)
 
       if (err) {
         if (errorStatusCode === '502') {
