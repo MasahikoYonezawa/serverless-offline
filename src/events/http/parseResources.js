@@ -162,7 +162,7 @@ function constructHapiInterface(pathObjects, methodObjects, methodId) {
   if (Integration.Type === APIGATEWAY_INTEGRATION_TYPE_HTTP_PROXY) {
     proxyUri = Integration.Uri
   }
-
+  console.log('proxyUri', proxyUri)
   return {
     isProxy: !!proxyUri,
     method,
