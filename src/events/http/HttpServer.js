@@ -388,6 +388,7 @@ export default class HttpServer {
     const hapiHandler = async (request, h) => {
       // Here we go
       // Store current request as the last one
+      console.log('hapiHandler')
       this.#lastRequestOptions = {
         headers: request.headers,
         method: request.method,
