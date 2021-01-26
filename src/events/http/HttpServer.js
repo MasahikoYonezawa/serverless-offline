@@ -388,7 +388,6 @@ export default class HttpServer {
     const hapiHandler = async (request, h) => {
       // Here we go
       // Store current request as the last one
-      console.log('hapiHandler')
       this.#lastRequestOptions = {
         headers: request.headers,
         method: request.method,
@@ -540,7 +539,6 @@ export default class HttpServer {
         const stageVariables = this.#serverless.service.custom
           ? this.#serverless.service.custom.stageVariables
           : null
-        console.log('stageVariables', stageVariables)
 
         const LambdaProxyEvent =
           endpoint.isHttpApi && endpoint.payload === '2.0'
@@ -868,7 +866,6 @@ export default class HttpServer {
         }
       } else if (integration === 'AWS_PROXY') {
         /* LAMBDA PROXY INTEGRATION HAPIJS RESPONSE CONFIGURATION */
-        console.log('ap_result', result)
         if (
           endpoint.isHttpApi &&
           endpoint.payload === '2.0' &&
@@ -1033,7 +1030,6 @@ export default class HttpServer {
     }
 
     const resourceRoutes = parseResources(this.#serverless.service.resources)
-    console.log('resourceRoutes', resourceRoutes)
 
     if (!resourceRoutes || !Object.keys(resourceRoutes).length) {
       return
@@ -1118,7 +1114,7 @@ export default class HttpServer {
           }
 
           serverlessLog(
-            `PROXY1 ${request.method} ${request.url.pathname} -> ${resultUri}`,
+            `PROXY ${request.method} ${request.url.pathname} -> ${resultUri}`,
           )
 
           return h.proxy({

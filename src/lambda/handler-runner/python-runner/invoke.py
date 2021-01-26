@@ -103,7 +103,6 @@ if __name__ == '__main__':
         try:
             result = {'status': 'success', 'value': handler(input['event'], context)}
         except Exception as e:
-            print("exception", str(e))
             result = {'status':'fail', 'value': str(e)}
         data = {
                 # just an identifier to distinguish between
