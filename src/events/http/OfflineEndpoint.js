@@ -32,11 +32,18 @@ export default class OfflineEndpoint {
     }
 
     Object.keys(statusCodes).forEach((key) => {
+      const statusCode = statusCodes[key];
+      const responseParameters = {};
+      if ("headers" in statusCode){
+        Object.keys(statusCode["headers"]).forEach((headerKey) => {
+            responseParameters["method.response.header."+headerKey] = statusCode["headers"][headerKey];
+        });
+      }
       offlineEndPoint.responses[key] = {
         responseModels: {
           'application/json;charset=UTF-8': 'Empty',
         },
-        responseParameters: {},
+        responseParameters: responseParameters,
         responseTemplates: {
           'application/json;charset=UTF-8': '',
         },
