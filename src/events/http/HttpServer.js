@@ -841,13 +841,6 @@ export default class HttpServer {
           override: false, // Maybe a responseParameter set it already. See #34
         })
 
-        const status30X = ['301', '302', '303', '305', '307', '308']
-        if (status30X.includes(statusCode)) {
-          response.header('Location', errorMessage, {
-            override: false,
-          })
-        }
-
         response.statusCode = statusCode
 
         if (contentHandling === 'CONVERT_TO_BINARY') {
