@@ -724,6 +724,11 @@ export default class HttpServer {
                 headerValue = valueArray[3]
                   ? jsonPath(result, valueArray.slice(3).join('.'))
                   : result
+
+                if(valueArray.length == 5 && valueArray[3] == "errorMessage"){
+                  headerValue = valueArray[4] ? jsonPath(result, valueArray.slice(4).join('.')) : result;
+                }  
+
                 if (
                   typeof headerValue === 'undefined' ||
                   headerValue === null
