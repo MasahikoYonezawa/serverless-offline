@@ -570,6 +570,14 @@ export default class HttpServer {
         err = _err
       }
 
+      let resultStatus = ''
+      try {
+        resultStatus = result.status
+        result = result.value
+      } catch (e) {
+        console.error(e)
+      }
+
       // const processResponse = (err, data) => {
       // Everything in this block happens once the lambda function has resolved
       debugLog('_____ HANDLER RESOLVED _____')
@@ -581,53 +589,104 @@ export default class HttpServer {
 
       // Failure handling
       let errorStatusCode = '502'
-      if (err) {
-        // Since the --useChildProcesses option loads the handler in
-        // a separate process and serverless-offline communicates with it
-        // over IPC, we are unable to catch JavaScript unhandledException errors
-        // when the handler code contains bad JavaScript. Instead, we "catch"
-        // it here and reply in the same way that we would have above when
-        // we lazy-load the non-IPC handler function.
-        if (this.#options.useChildProcesses && err.ipcException) {
-          return this._reply502(
-            response,
-            `Error while loading ${functionKey}`,
-            err,
-          )
-        }
+      let errorList = ''
+      let errorMessage = ''
 
-        const errorMessage = (err.message || err).toString()
-
-        const re = /\[(\d{3})]/
-        const found = errorMessage.match(re)
-
-        if (found && found.length > 1) {
-          ;[, errorStatusCode] = found
-        } else {
-          errorStatusCode = '502'
-        }
-
-        // Mocks Lambda errors
-        result = {
-          errorMessage,
-          errorType: err.constructor.name,
-          stackTrace: this._getArrayStackTrace(err.stack),
-        }
-
-        serverlessLog(`Failure: ${errorMessage}`)
-
-        if (!this.#options.hideStackTraces) {
-          console.error(err.stack)
-        }
-
-        for (const [key, value] of Object.entries(endpoint.responses)) {
+      if (resultStatus === 'fail') {
+        if (Object.prototype.hasOwnProperty.call(httpEvent, 'response')) {
           if (
-            key !== 'default' &&
-            errorMessage.match(`^${value.selectionPattern || key}$`)
+            Object.prototype.hasOwnProperty.call(
+              httpEvent.response,
+              'statusCodes',
+            )
           ) {
-            responseName = key
-            break
+            const { statusCodes } = httpEvent.response
+            Object.keys(statusCodes).some((key) => {
+              const { pattern } = statusCodes[key]
+              const regex = new RegExp(`^${pattern}$`)
+              if (regex.test(result)) {
+                console.log('key', key)
+                console.log('pattern', pattern)
+                try {
+                  console.log('result2', result)
+                  errorList = JSON.parse(result)
+                } catch (e) {
+                  errorList = { type: result }
+                  console.error(e)
+                }
+                err = result
+                errorStatusCode = key
+                return true
+              }
+              return false
+            })
           }
+        }
+      }
+      console.log('errorList', errorList)
+
+      if (err) {
+        if (errorStatusCode === '502') {
+          // Since the --useChildProcesses option loads the handler in
+          // a separate process and serverless-offline communicates with it
+          // over IPC, we are unable to catch JavaScript unhandledException errors
+          // when the handler code contains bad JavaScript. Instead, we "catch"
+          // it here and reply in the same way that we would have above when
+          // we lazy-load the non-IPC handler function.
+          if (this.#options.useChildProcesses && err.ipcException) {
+            return this._reply502(
+              response,
+              `Error while loading ${functionKey}`,
+              err,
+            )
+          }
+
+          errorMessage = (err.message || err).toString()
+
+          const re = /\[(\d{3})]/
+          const found = errorMessage.match(re)
+
+          if (found && found.length > 1) {
+            ;[, errorStatusCode] = found
+          } else {
+            errorStatusCode = '502'
+          }
+
+          // Mocks Lambda errors
+          result = {
+            errorMessage,
+            errorType: err.constructor.name,
+            stackTrace: this._getArrayStackTrace(err.stack),
+          }
+
+          serverlessLog(`Failure: ${errorMessage}`)
+
+          if (!this.#options.hideStackTraces) {
+            console.error(err.stack)
+          }
+
+          for (const [key, value] of Object.entries(endpoint.responses)) {
+            if (
+              key !== 'default' &&
+              errorMessage.match(`^${value.selectionPattern || key}$`)
+            ) {
+              responseName = key
+              break
+            }
+          }
+        } else {
+          errorMessage = err.toString()
+          // Mocks Lambda errors
+          result = {
+            errorMessage,
+            errorType: err.toString(),
+            stackTrace: err.toString(),
+          }
+          responseName = errorStatusCode
+          Object.keys(errorList).forEach((key) => {
+            console.log('key2', key)
+            result[key] = errorList[key]
+          })
         }
       }
 
@@ -665,6 +724,11 @@ export default class HttpServer {
                 headerValue = valueArray[3]
                   ? jsonPath(result, valueArray.slice(3).join('.'))
                   : result
+
+                if(valueArray.length == 5 && valueArray[3] == "errorMessage"){
+                  headerValue = valueArray[4] ? jsonPath(result, valueArray.slice(4).join('.')) : result;
+                }  
+
                 if (
                   typeof headerValue === 'undefined' ||
                   headerValue === null
@@ -783,7 +847,11 @@ export default class HttpServer {
           response.encoding = 'binary'
           response.source = Buffer.from(result, 'base64')
           response.variety = 'buffer'
-        } else if (typeof result === 'string') {
+        } else if (
+          typeof result === 'string' &&
+          responseContentType !== 'text/html' &&
+          responseContentType !== 'text/javascript'
+        ) {
           response.source = JSON.stringify(result)
         } else if (result && result.body && typeof result.body !== 'string') {
           return this._reply502(
@@ -796,7 +864,6 @@ export default class HttpServer {
         }
       } else if (integration === 'AWS_PROXY') {
         /* LAMBDA PROXY INTEGRATION HAPIJS RESPONSE CONFIGURATION */
-
         if (
           endpoint.isHttpApi &&
           endpoint.payload === '2.0' &&
@@ -874,7 +941,11 @@ export default class HttpServer {
           override: false,
         })
 
-        if (typeof result === 'string') {
+        if (
+          typeof result === 'string' &&
+          responseContentType !== 'text/html' &&
+          responseContentType !== 'text/javascript'
+        ) {
           response.source = JSON.stringify(result)
         } else if (result && typeof result.body !== 'undefined') {
           if (result.isBase64Encoded) {
