@@ -724,6 +724,11 @@ export default class HttpServer {
                 headerValue = valueArray[3]
                   ? jsonPath(result, valueArray.slice(3).join('.'))
                   : result
+
+                if(valueArray.length == 5 && valueArray[3] == "errorMessage"){
+                  headerValue = valueArray[4] ? jsonPath(result, valueArray.slice(4).join('.')) : result;
+                }  
+
                 if (
                   typeof headerValue === 'undefined' ||
                   headerValue === null
@@ -835,13 +840,6 @@ export default class HttpServer {
         response.header('Content-Type', responseContentType, {
           override: false, // Maybe a responseParameter set it already. See #34
         })
-
-        const status30X = ['301', '302', '303', '305', '307', '308']
-        if (status30X.includes(statusCode)) {
-          response.header('Location', errorMessage, {
-            override: false,
-          })
-        }
 
         response.statusCode = statusCode
 
